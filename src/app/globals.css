@@ -1,6 +1,13 @@
 @import "tailwindcss";
 @import "tw-animate-css";
 
+
+:root,
+html,
+body {
+  height: 100%;
+}
+
 @custom-variant dark (&:is(.dark *));
 
 @theme inline {
@@ -116,6 +123,7 @@
   * {
     @apply border-border outline-ring/50;
   }
+
   body {
     @apply bg-background text-foreground;
   }
