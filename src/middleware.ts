@@ -18,18 +18,29 @@ export async function middleware(request: NextRequest) {
     if (session?.user && isAuthPage) {
         const { role } = session.user;
 
-        if (role === OWNER_ROLE_ID || role === ADMIN_ROLE_ID || role === CUSTOMER_ROLE_ID) {
+        if (role === OWNER_ROLE_ID ) {
             return NextResponse.redirect(new URL("/", request.url));
+        } else if (role === ADMIN_ROLE_ID) {
+            return  NextResponse.redirect(new URL("/Admin", request.url));
+        } else {
+            return NextResponse.redirect(new URL("/unauthorized", request.url));
         }
+
 
         // Optional: handle unknown roles if needed
         return NextResponse.redirect(new URL("/unauthorized", request.url));
     }
 
+    // prevent owner to access the admin pages
+    if(pathname === "/Admin" && session?.user.role === OWNER_ROLE_ID) {
+        console.log("Non Admin")
+        return NextResponse.redirect(new URL("/unauthorized", request.url));
+
+    }
     // Authenticated and accessing a protected page
     return NextResponse.next();
 }
 
 export const config = {
-    matcher: ["/", "/dashboard/:path*", "/OW/:path*", "/login", "/signup"],
+    matcher: ["/", "/Admin/:path*", "/login", "/signup"],
 };

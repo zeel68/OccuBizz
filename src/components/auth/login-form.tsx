@@ -86,12 +86,11 @@ export const LoginForm = () => {
             toast.success("Welcome back!", {
               description: "You have been logged in successfully.",
             });
-
             // Redirect based on role with a small delay to show success message
             setTimeout(() => {
               switch (role) {
                 case ADMIN_ROLE_ID:
-                  router.push("/products");
+                  router.push("/Admin");
                   break;
                 case OWNER_ROLE_ID:
                   router.push("/");
