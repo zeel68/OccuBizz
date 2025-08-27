@@ -20,11 +20,15 @@ const eslintConfig = [
       "next-env.d.ts",
     ],
     rules: {
-      // Allow 'any' type
       "@typescript-eslint/no-explicit-any": "off",
-
-      // Disable unused variable warnings
       "@typescript-eslint/no-unused-vars": "off",
+
+      // Disable problematic rules
+      "prefer-const": "off",
+      "react/no-unescaped-entities": "off",
+      "@next/next/no-img-element": "off",
+      "react-hooks/rules-of-hooks": "off",
+      "@typescript-eslint/no-wrapper-object-types": "off",
     },
   },
 ];

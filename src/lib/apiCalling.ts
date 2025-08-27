@@ -3,6 +3,7 @@ import axios, {
     type AxiosRequestConfig,
     type AxiosResponse,
 } from "axios";
+import { refreshToken } from "./utils";
 
 
 enum HttpMethod {
@@ -53,6 +54,9 @@ class ApiClient {
             async (error) => {
                 if (error.response?.status === 401) {
                     // Token might be expired, you can implement refresh logic here
+                    await refreshToken();
+                    console.log("Refresh token");
+
                     console.warn("API request failed with 401, token might be expired");
                 }
                 return Promise.reject(error);

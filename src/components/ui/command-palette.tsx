@@ -298,7 +298,7 @@ export function CommandPalette({ open, onOpenChange }: CommandPaletteProps) {
                 className="text-center py-8 text-muted-foreground"
               >
                 <Search className="h-8 w-8 mx-auto mb-2 opacity-50" />
-                <p>No commands found for "{query}"</p>
+                <p>No commands found for{query}</p>
               </motion.div>
             )}
           </div>

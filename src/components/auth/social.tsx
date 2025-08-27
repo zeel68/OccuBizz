@@ -30,6 +30,8 @@ export const SocialLogin = ({ showGoogle, showFacebook, showTwitter }: SocialLog
                     email: session.user.email || "",
                     name: session.user.name || "",
                     role: session.user.role,
+                    accessToken: session.user.accessToken,
+                    refreshToken: session.user.refreshToken,
                 },
                 session.user.accessToken,
             )

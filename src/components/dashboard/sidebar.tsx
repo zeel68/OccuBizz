@@ -313,9 +313,9 @@ export function StoreAdminSidebar() {
                   {session?.user?.email || "admin@store.com"}
                 </p>
               </div>
-              <div className="ml-auto flex">
-                <Badge variant={'default'} className="h-5 text-xs">Pro</Badge>
-              </div>
+              {/*<div className="ml-auto flex">*/}
+              {/*  <Badge variant={'default'} className="h-5 text-xs">Pro</Badge>*/}
+              {/*</div>*/}
             </button>
           </DropdownMenuTrigger>
           <DropdownMenuContent

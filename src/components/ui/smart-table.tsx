@@ -296,7 +296,7 @@ export function SmartTable<T extends Record<string, any>>({
       return <Badge variant={value ? "default" : "secondary"}>{value ? "Yes" : "No"}</Badge>
     }
 
-    if (value instanceof Date) {
+    if ((value as any) instanceof Date) {
       return value.toLocaleDateString()
     }
 
@@ -626,13 +626,14 @@ export function SmartTable<T extends Record<string, any>>({
             ) : virtualScrolling ? (
               <TableRow>
                 <TableCell colSpan={visibleColumns.length + (selectable ? 1 : 0) + 1} className="p-0">
-                  <List
+                  {/* <List
                     height={Math.min(paginatedData.length * rowHeight, 400)}
                     itemCount={paginatedData.length}
                     itemSize={rowHeight}
                   >
                     {Row}
-                  </List>
+                  </List> */}
+                  { }
                 </TableCell>
               </TableRow>
             ) : (

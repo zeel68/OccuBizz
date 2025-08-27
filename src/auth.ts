@@ -6,25 +6,37 @@ import ApiClient from "./lib/apiCalling"
 import { iUser } from "./models/user.model";
 import { ApiResponse, iLoginResponseData } from "./models/api.model";
 
-// --- helper to refresh tokens ---
-async function refreshAccessToken(token: any) {
+import { JWT } from "next-auth/jwt"
+
+export async function refreshToken(token: JWT): Promise<JWT | null> {
   try {
-    const apiClient = new ApiClient();
-    const res = await apiClient.post('auth/refresh-token', { refreshToken: token.refreshToken }) as ApiResponse<any>
+    // Call your backend refresh endpoint
+    const response = await fetch(`${process.env.API_URL}/auth/refresh`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token.refreshToken}`,
+      },
+    })
 
+    if (!response.ok) {
+      throw new Error("Failed to refresh token")
+    }
 
-    if (!res.success) throw new Error("Failed to refresh access token")
-    const data = res.data.data
+    const data = await response.json()
 
     return {
       ...token,
       accessToken: data.accessToken,
       refreshToken: data.refreshToken ?? token.refreshToken,
-      accessTokenExpires: Date.now() + (data.expiresIn || 3600) * 1000, // default 1h
+      accessTokenExpires: Date.now() + 24 * 60 * 60 * 1000, // or use API expiry
     }
   } catch (err) {
-    console.error("Refresh token error:", err)
-    return { ...token, error: "RefreshAccessTokenError" }
+    console.error("Error refreshing token:", err)
+    return {
+      ...token,
+      error: "RefreshAccessTokenError",
+    }
   }
 }
 
@@ -149,7 +161,9 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       }
 
       // Expired → refresh it
-      return await refreshAccessToken(token)
+      console.log("Expired Token");
+
+      return await refreshToken(token);
     },
 
     async session({ session, token }) {

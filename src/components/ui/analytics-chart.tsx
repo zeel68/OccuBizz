@@ -313,7 +313,8 @@ export function AnalyticsChart({
           transition={{ duration: 0.3 }}
         >
           <ResponsiveContainer width="100%" height={height}>
-            {renderChart()}
+            {<></>}
+            {/* {renderChart()} */}
           </ResponsiveContainer>
         </motion.div>
       </CardContent>

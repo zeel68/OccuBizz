@@ -60,7 +60,7 @@ export const LoginForm = () => {
           const session = await getSession();
 
           if (session?.user) {
-            const { id, email, name, role, accessToken } = session.user;
+            const { id, email, name, role, accessToken, refreshToken } = session.user;
 
             if (!accessToken) {
               setError("Authentication failed. Please try again.");
@@ -77,7 +77,8 @@ export const LoginForm = () => {
                 email: email ?? "",
                 name: name ?? "",
                 role,
-
+                accessToken,
+                refreshToken
               },
               accessToken
             );

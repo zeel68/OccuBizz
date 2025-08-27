@@ -78,7 +78,7 @@ export function DragDropZone({
           return
         }
 
-        const error = validateFile(file)
+        const error = validateFile(file) ?? ""
         const fileWithPreview: FileWithPreview = {
           ...file,
           id: `${Date.now()}-${index}`,
@@ -337,4 +337,3 @@ export function DragDropZone({
     </div>
   )
 }
-</merged_code>
