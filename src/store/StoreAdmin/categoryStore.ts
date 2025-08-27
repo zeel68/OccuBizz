@@ -71,7 +71,6 @@ export const useCategoryStore = create<CategoryState>()(
                             loading: false,
                             lastFetch: now,
                         });
-                        console.log("cat data", data);
 
                     } else {
                         set({
@@ -81,7 +80,6 @@ export const useCategoryStore = create<CategoryState>()(
                         });
                     }
                 } catch (error: any) {
-                    console.error("Category fetch error:", error);
                     set({
                         error: error.message || "Failed to fetch categories",
                         loading: false,
@@ -108,7 +106,6 @@ export const useCategoryStore = create<CategoryState>()(
                             loading: false,
                             lastFetch: now,
                         });
-                        console.log("cat data", data);
 
                     } else {
                         set({
@@ -118,7 +115,6 @@ export const useCategoryStore = create<CategoryState>()(
                         });
                     }
                 } catch (error: any) {
-                    console.error("Category fetch error:", error);
                     set({
                         error: error.message || "Failed to fetch categories",
                         loading: false,
@@ -180,11 +176,10 @@ export const useCategoryStore = create<CategoryState>()(
                         `/store-admin/category/${id}`,
                         categoryData,
                     ) as any;
-                    console.log(response);
 
                     if (response.success) {
                         const state = get();
-                        
+
                         get().fetchCategories();
                     } else {
                         const errorMsg = response.error || "Failed to update category";
