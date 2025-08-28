@@ -25,7 +25,6 @@ import { Skeleton } from "@/components/ui/skeleton";
 
 interface AddProductsToCategoryPageProps {
   category: any;
-  onBack: () => void;
 }
 
 interface Product {
@@ -39,7 +38,6 @@ interface Product {
 
 export function AddProductsToCategoryPage({
   category,
-  onBack,
 }: AddProductsToCategoryPageProps) {
   const {
     productInfo,
@@ -124,7 +122,6 @@ export function AddProductsToCategoryPage({
       toast.success(
         `${selectedProducts.length} product${selectedProducts.length > 1 ? "s" : ""} assigned to ${category.display_name}`,
       );
-      onBack();
     } catch (error: any) {
       console.error("Assign products error:", error);
       toast.error(error.message || "Failed to assign products to category");
@@ -140,10 +137,6 @@ export function AddProductsToCategoryPage({
       {/* Header */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-4">
-          <Button variant="outline" onClick={onBack} disabled={isFormDisabled}>
-            <ArrowLeft className="h-4 w-4 mr-2" />
-            Back
-          </Button>
           <div>
             <h1 className="text-3xl font-bold tracking-tight">
               Add Products to Category
@@ -328,32 +321,7 @@ export function AddProductsToCategoryPage({
           </div>
         )}
 
-        {/* Action Buttons */}
-        <div className="flex items-center gap-2 ml-auto">
-          <Button
-            type="button"
-            variant="outline"
-            onClick={onBack}
-            disabled={isFormDisabled}
-          >
-            Cancel
-          </Button>
-          <Button onClick={handleSubmit} disabled={isFormDisabled}>
-            {isSubmitting ? (
-              <>
-                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                Assigning...
-              </>
-            ) : (
-              <>
-                <Save className="mr-2 h-4 w-4" />
-                {editProducts
-                  ? "Update"
-                  : `Add ${selectedProducts.length} Product${selectedProducts.length !== 1 ? "s" : ""}`}
-              </>
-            )}
-          </Button>
-        </div>
+
       </div>
     </div>
   );

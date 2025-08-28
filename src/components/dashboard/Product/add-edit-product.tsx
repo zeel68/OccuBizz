@@ -88,10 +88,10 @@ interface AddEditProductPageProps {
     }>
 }
 
-export default function AddEditProductPage({ id }: { id?: string }) {
+export default function AddEditProductPage({ id }: { id: string }) {
     const productId = id;
     const router = useRouter()
-    const { updateProduct, loading, fetchProductById, selectedProduct } = useProductStore()
+    const { updateProduct, createProduct, loading, fetchProductById, selectedProduct } = useProductStore()
     const { allCategories, fetchAllCategories } = useCategoryStore()
 
     const [activeTab, setActiveTab] = useState("basic")
@@ -156,8 +156,9 @@ export default function AddEditProductPage({ id }: { id?: string }) {
     useEffect(() => {
         if (productId) {
             console.log("selec", productId);
-
             fetchProductById(productId)
+            console.log(selectedProduct);
+
         }
         if (allCategories.length === 0) {
             fetchAllCategories(true)
@@ -500,6 +501,7 @@ export default function AddEditProductPage({ id }: { id?: string }) {
     const onSubmit = async (data: iProductFormData) => {
         try {
             // Upload main images
+
             const mainImageUrls = await uploadMultipleToCloudinary(mainImages)
 
             // Upload variant images
@@ -535,9 +537,13 @@ export default function AddEditProductPage({ id }: { id?: string }) {
                 track_inventory: data.stock.track_inventory
             }
             // console.log(data);
-
-            await updateProduct(productId ?? "", data)
-            toast.success("Product updated successfully")
+            if (productId) {
+                await updateProduct(productId ?? "", data)
+                toast.success("Product updated successfully")
+            } else {
+                await createProduct(data);
+                toast.success("Product added successfully")
+            }
             router.push("/products")
         } catch (error: any) {
             toast.error(error.message || "Failed to save product")
@@ -1628,7 +1634,8 @@ export default function AddEditProductPage({ id }: { id?: string }) {
                             >
                                 {loading && <div className="h-4 w-4 animate-spin rounded-full border-2 border-b-transparent" />}
                                 <Save className="h-4 w-4" />
-                                Update Product
+                                {productId ? "Update Product" : "Add Product"}
+
                             </Button>
                         </div>
                     </div>
