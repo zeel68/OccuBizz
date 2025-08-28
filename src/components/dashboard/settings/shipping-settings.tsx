@@ -194,7 +194,7 @@ export function ShippingSettings({ storeConfig }: ShippingSettingsProps) {
             }
 
             await updateStoreConfig(shippingInfo as any)
-            await router.replace(router.asPath); // redirect to same page
+            // await router.replace(router.asPath); // redirect to same page
 
             toast.success("Shipping settings saved successfully")
         } catch (error: any) {

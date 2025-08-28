@@ -88,9 +88,8 @@ const navigation = [
     icon: BarChart3,
     badge: "New",
     children: [
-      { name: "Coupons", href: "/marketing/coupons" },
-      // { name: "Campaigns", href: "/marketing/campaigns" },
-      // { name: "Email Templates", href: "/marketing/email" },
+      { name: "All Analytics", href: "/analytics" },
+
     ],
   },
   {
