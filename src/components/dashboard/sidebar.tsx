@@ -70,10 +70,6 @@ const navigation = [
     name: "Products",
     href: "/products",
     icon: Package,
-    children: [
-      { name: "All Products", href: "/products" },
-      { name: "Add Product", href: "/products/add" },
-    ],
   },
 
   {
@@ -91,16 +87,17 @@ const navigation = [
     href: "/analytics",
     icon: BarChart3,
     badge: "New",
-  },
-  {
-    name: "Marketing",
-    href: "/marketing",
-    icon: Gift,
     children: [
       { name: "Coupons", href: "/marketing/coupons" },
       // { name: "Campaigns", href: "/marketing/campaigns" },
       // { name: "Email Templates", href: "/marketing/email" },
     ],
+  },
+  {
+    name: "Coupons",
+    href: "/coupons",
+    icon: Gift,
+
   },
   {
     name: "Reviews",
@@ -219,7 +216,7 @@ export function StoreAdminSidebar() {
                         <span className="truncate">{item.name}</span>
                         {item.badge && (
                           <Badge className="ml-2 text-xs px-1.5 py-0.5">
-                            {item}
+                            {item.badge}
                           </Badge>
                         )}
                       </div>
@@ -284,7 +281,7 @@ export function StoreAdminSidebar() {
                     <span className="truncate">{item.name}</span>
                     {item.badge && (
                       <Badge variant={'default'} className="ml-auto text-xs px-1.5 py-0.5">
-                        {item.badge}
+                        {item}
                       </Badge>
                     )}
                   </Link>

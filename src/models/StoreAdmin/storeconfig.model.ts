@@ -78,14 +78,14 @@ export interface iStoreConfig {
     updated_at: string
 }
 
-interface iStoreTheme {
+export interface iStoreTheme {
     primary_color: string
     secondary_color: string
     font_family: string
     custom_css?: string
 }
 
-interface iStoreFeatures {
+export interface iStoreFeatures {
     reviews_enabled: boolean
     wishlist_enabled: boolean
     compare_enabled: boolean
