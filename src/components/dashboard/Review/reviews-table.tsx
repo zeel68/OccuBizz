@@ -28,6 +28,7 @@ import {
   MessageSquare,
 } from "lucide-react"
 import { formatRelativeTime, getInitials, getStatusColor, truncateText } from "@/lib/utils"
+import { iReview } from "@/models/StoreAdmin/review.model"
 
 interface Review {
   _id: string
@@ -49,7 +50,7 @@ interface Review {
 }
 
 interface ReviewsTableProps {
-  reviews: Review[]
+  reviews: iReview[]
   isLoading: boolean
   onView?: (review: Review) => void
   onEdit?: (review: Review) => void
