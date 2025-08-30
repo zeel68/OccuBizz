@@ -12,13 +12,20 @@ interface CategoryProductProps {
 
 export default function CategoryProduct({ params }: CategoryProductProps) {
     const { id } = use(params);
-    const { categories } = useCategoryStore();
+    const { categories, allCategories, fetchAllCategories } = useCategoryStore();
     const [selectedCategory, setSelectedCategory] = useState<any>(null);
 
     useEffect(() => {
-        const category = categories.find((category) => category._id === id);
+        if (allCategories.length == 0) {
+            fetchAllCategories();
+
+
+        }
+        const category = allCategories.find((category) => category._id === id);
+        console.log(allCategories);
+
         setSelectedCategory(category);
-    }, [categories, id]);
+    }, [fetchAllCategories, categories, allCategories]);
 
     return (
         <div>
