@@ -27,6 +27,7 @@ import { toast } from "sonner"
 import { v4 } from "uuid";
 import { CategoryFilter, iProductVariant, iProductFormData } from "@/models/StoreAdmin/product.model"
 import { iCategory } from "@/models/StoreAdmin/category.model"
+import { error } from "console"
 // Define interfaces for type safety
 
 type RawValue =
@@ -88,10 +89,10 @@ interface AddEditProductPageProps {
     }>
 }
 
-export default function AddEditProductPage({ id }: { id: string }) {
+export default function AddEditProductPage({ id }: { id?: string }) {
     const productId = id;
     const router = useRouter()
-    const { updateProduct, createProduct, loading, fetchProductById, selectedProduct } = useProductStore()
+    const { updateProduct, createProduct, loading, fetchProductById, selectedProduct, error } = useProductStore()
     const { allCategories, fetchAllCategories } = useCategoryStore()
 
     const [activeTab, setActiveTab] = useState("basic")
@@ -539,12 +540,24 @@ export default function AddEditProductPage({ id }: { id: string }) {
             // console.log(data);
             if (productId) {
                 await updateProduct(productId ?? "", data)
+
                 toast.success("Product updated successfully")
             } else {
                 await createProduct(data);
-                toast.success("Product added successfully")
+                console.log(error);
+
+                if (!error) {
+                    console.log(error);
+                    toast.success("Product added successfully")
+                }
+                else {
+                    console.log(error);
+                    toast.success(error)
+                }
             }
-            router.push("/products")
+            if (!error) {
+                router.push("/products")
+            }
         } catch (error: any) {
             toast.error(error.message || "Failed to save product")
         }

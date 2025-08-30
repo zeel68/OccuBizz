@@ -5,7 +5,7 @@ export interface ApiResponse<T> {
     statusCode: number;
     success: boolean;
     data?: T;
-    error?: string;
+    error?: any;
 }
 
 // Define the shape of the login response data

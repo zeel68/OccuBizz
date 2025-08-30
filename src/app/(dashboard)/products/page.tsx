@@ -58,7 +58,7 @@ export default function ProductsPage() {
         if (categories.length === 0) {
             fetchCategories()
         }
-        fetchProductStats()
+        // fetchProductStats()
     }, [categories.length, fetchCategories, fetchProductStats])
 
     // Debounced search effect

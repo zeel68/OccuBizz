@@ -2,16 +2,16 @@
 
 import { AddProductsToCategoryPage } from '@/components/dashboard/Category/add-category-product';
 import { useCategoryStore } from '@/store/StoreAdmin/categoryStore';
-import React, { useEffect, useState } from 'react';
+import React, { use, useEffect, useState } from 'react';
 
 interface CategoryProductProps {
-    params: {
+    params: Promise<{
         id: string;
-    };
+    }>;
 }
 
 export default function CategoryProduct({ params }: CategoryProductProps) {
-    const { id } = params;
+    const { id } = use(params);
     const { categories } = useCategoryStore();
     const [selectedCategory, setSelectedCategory] = useState<any>(null);
 

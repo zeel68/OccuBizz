@@ -6,6 +6,7 @@ import { getSession } from "next-auth/react"
 import ApiClient from "@/lib/apiCalling"
 import { iProduct, iProductFilters, iProductInfo, iProductStats, iProductVariant } from "@/models/StoreAdmin/product.model"
 import { ApiResponse } from "@/models/api.model"
+import { error } from "console"
 
 interface ProductState {
     // State
@@ -66,7 +67,7 @@ export const useProductStore = create<ProductState>()(
                     const response = await apiClient.get<iProductInfo>("/store-admin/products", { params: filters }) as any
 
                     if (response.success) {
-                        set({ productInfo: response.data.data, loading: false })
+                        set({ productInfo: response.data.data, loading: false, error: null })
                     } else {
                         set({ error: response.error || 'Failed to fetch products', loading: false })
                     }
@@ -83,7 +84,7 @@ export const useProductStore = create<ProductState>()(
                     console.log(response);
 
                     if (response.success) {
-                        set({ selectedProduct: response.data.data, loading: false })
+                        set({ selectedProduct: response.data.data, loading: false, error: null })
                         console.log(get().selectedProduct);
 
                     } else {
@@ -101,19 +102,24 @@ export const useProductStore = create<ProductState>()(
 
                     console.log(data);
 
-                    const response = await apiClient.post<iProduct>("/store-admin/products", data)
+                    const response = await apiClient.post("/store-admin/products", data) as ApiResponse<any>
                     console.log(response);
 
                     if (response.success) {
                         console.log("prod", response);
 
-                        set({ loading: false })
+                        set({ loading: false, error: null })
                         // Refresh products list
                         get().fetchProducts()
                     } else {
-                        set({ error: response.error?.message || 'Failed to create product', loading: false })
+
+                        set({ error: "Hello", loading: false })
+                        console.log("error", get().error);
+
                     }
                 } catch (error: any) {
+                    console.log("Error");
+
                     set({ error: error.message || 'Failed to create product', loading: false })
                 }
             },

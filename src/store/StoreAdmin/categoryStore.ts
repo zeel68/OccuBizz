@@ -27,6 +27,7 @@ const session = await getSession();
 const apiClient = new ApiClient({
     headers: {
         Authorization: `Bearer ${session?.user.accessToken}`,
+        
     },
 });
 export const useCategoryStore = create<CategoryState>()(
