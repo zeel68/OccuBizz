@@ -17,7 +17,7 @@ import { iProduct, iProductFilters } from "@/models/StoreAdmin/product.model"
 export default function ProductsPage() {
     const router = useRouter()
     const { productInfo, fetchProducts, error, loading, fetchProductStats, stats } = useProductStore()
-    const { categories, allCategories, fetchCategories } = useCategoryStore()
+    const { categories, allCategories, fetchCategories, fetchAllCategories } = useCategoryStore()
 
     const [currentPage, setCurrentPage] = useState(1)
     const [itemsPerPage, setItemsPerPage] = useState(20)
@@ -55,11 +55,12 @@ export default function ProductsPage() {
 
     // Load categories on mount
     useEffect(() => {
-        if (categories.length === 0) {
+        if (allCategories.length === 0) {
             fetchCategories()
+            fetchAllCategories();
         }
         // fetchProductStats()
-    }, [categories.length, fetchCategories, fetchProductStats])
+    }, [categories.length, fetchCategories, fetchProductStats, fetchAllCategories])
 
     // Debounced search effect
     useEffect(() => {
@@ -504,7 +505,7 @@ export default function ProductsPage() {
                         isLoading={loading}
                         onEdit={handleEditProduct}
                         onView={handleViewProduct}
-                        categories={categories}
+                        categories={allCategories}
                     />
 
                     {totalItems > 0 && (
