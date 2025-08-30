@@ -52,6 +52,8 @@ export default function AddEditCategoryPage({ categoryId }: AddEditCategoryPageP
         createCategory,
         updateCategory,
         categories,
+        allCategories,
+        fetchAllCategories,
         fetchParentCategory,
         loading,
     } = useCategoryStore();
@@ -94,9 +96,10 @@ export default function AddEditCategoryPage({ categoryId }: AddEditCategoryPageP
     // Fetch categories and category data if editing
     useEffect(() => {
         fetchParentCategory();
+        fetchAllCategories();
         if (categoryId) {
             // Find category from the categories array
-            const category = categories.find(cat => cat._id === categoryId);
+            const category = allCategories.find(cat => cat._id === categoryId);
             if (category) {
                 setFormData({
                     name: category.display_name || "",
@@ -108,7 +111,7 @@ export default function AddEditCategoryPage({ categoryId }: AddEditCategoryPageP
                     is_active: category.is_active !== false,
                     is_primary: category.is_primary || false,
                     image_url: category.image_url || category.img_url || "",
-                    filters: (category.config?.filters || []).map(f => ({
+                    filters: (category.config?.filters || []).map((f: any) => ({
                         ...f,
                         options: f.options ? [...f.options] : []
                     })),
@@ -116,7 +119,7 @@ export default function AddEditCategoryPage({ categoryId }: AddEditCategoryPageP
                 });
             }
         }
-    }, [categoryId, fetchParentCategory, categories]);
+    }, [categoryId, fetchParentCategory, categories, fetchAllCategories]);
 
     const filteredCategories = categories.filter((category) => category._id !== categoryId);
 
@@ -420,7 +423,7 @@ export default function AddEditCategoryPage({ categoryId }: AddEditCategoryPageP
                                                         <SelectItem value="none">
                                                             No Parent (Root Category)
                                                         </SelectItem>
-                                                        {filteredCategories.map((cat) => (
+                                                        {allCategories.map((cat) => (
                                                             <SelectItem key={cat._id} value={cat._id}>
                                                                 {cat.display_name}
                                                             </SelectItem>

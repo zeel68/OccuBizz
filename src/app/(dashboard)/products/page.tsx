@@ -17,7 +17,7 @@ import { iProduct, iProductFilters } from "@/models/StoreAdmin/product.model"
 export default function ProductsPage() {
     const router = useRouter()
     const { productInfo, fetchProducts, error, loading, fetchProductStats, stats } = useProductStore()
-    const { categories, fetchCategories } = useCategoryStore()
+    const { categories, allCategories, fetchCategories } = useCategoryStore()
 
     const [currentPage, setCurrentPage] = useState(1)
     const [itemsPerPage, setItemsPerPage] = useState(20)
