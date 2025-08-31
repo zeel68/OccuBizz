@@ -152,6 +152,8 @@ export default function AddEditProductPage({ id }: { id?: string }) {
     const selectedCategoryId = form.watch("category")
     const selectedCategory = allCategories.find(cat => cat._id === selectedCategoryId)
     const categoryAttributes = normalizeFilters(selectedCategory?.config?.attributes)
+    console.log(categoryAttributes);
+
 
     // Fetch data
     useEffect(() => {
@@ -159,6 +161,7 @@ export default function AddEditProductPage({ id }: { id?: string }) {
             console.log("selec", productId);
             fetchProductById(productId)
             console.log(selectedProduct);
+            console.log(selectedCategory);
 
         }
         if (allCategories.length === 0) {
@@ -397,14 +400,14 @@ export default function AddEditProductPage({ id }: { id?: string }) {
                         attributes: {}
                     }
                     const filters = normalizeFilters(selectedCategory?.config?.filters)
-                    if (filters.length > 0) {
-                        const initialAttributes: Record<string, any> = {}
-                        filters.forEach(attr => {
-                            if (attr.type === "multiselect") initialAttributes[attr.name] = []
-                            else initialAttributes[attr.name] = ""
-                        })
-                        newSize.attributes = initialAttributes
-                    }
+                    // if (filters.length > 0) {
+                    //     const initialAttributes: Record<string, any> = {}
+                    //     filters.forEach(attr => {
+                    //         if (attr.type === "multiselect") initialAttributes[attr.name] = []
+                    //         else initialAttributes[attr.name] = ""
+                    //     })
+                    //     newSize.attributes = initialAttributes
+                    // }
                     return {
                         ...variant,
                         sizes: [...variant.sizes, newSize]
@@ -569,6 +572,7 @@ export default function AddEditProductPage({ id }: { id?: string }) {
         const size = variant.sizes.find(s => s.id === sizeId)
         if (!size) return null
         const value = size.attributes[attribute.name]
+        console.log(variant);
 
         switch (attribute.type) {
             case "text":
@@ -1308,9 +1312,11 @@ export default function AddEditProductPage({ id }: { id?: string }) {
                                                     />
                                                 </td>
 
-                                                {categoryAttributes.map((attr) => (
-                                                    <td key={attr.name} className="p-2 min-w-[50px] max-w-[200px]">
+                                                {categoryAttributes.map((attr: any) => (
+
+                                                    <td key={attr.name} className="p-2 min-w-[50px] max-w-[200px]" >
                                                         {renderAttributeInput(variant.id, size.id, attr)}
+                                                        {/* {attr.map((attr1: any) => <>{attr1}</>)} */}
                                                     </td>
                                                 ))}
 
@@ -1438,7 +1444,7 @@ export default function AddEditProductPage({ id }: { id?: string }) {
                     </div>
                 </CardContent>
             </Card>
-        </div>
+        </div >
     )
 
     const renderShippingTab = () => (
