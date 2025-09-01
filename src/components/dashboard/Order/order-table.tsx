@@ -71,7 +71,9 @@ const statusColors: Record<string, string> = {
   delivered:
     "bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400",
   cancelled: "bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400",
+  failed: "bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400",
   refunded: "bg-red-500 text-blue-800 dark:bg-red-900/30 dark:text-red-400",
+  confirmed: "bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400",
   returned:
     "bg-orange-100 text-orange-800 dark:bg-orange-900/30 dark:text-orange-400",
 };
@@ -81,6 +83,8 @@ const paymentStatusColors: Record<string, string> = {
   pending:
     "bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-400",
   failed: "bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400",
+  confirmed: "bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400",
+
   refunded: "bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400",
   partially_refunded:
     "bg-orange-100 text-orange-800 dark:bg-orange-900/30 dark:text-orange-400",
@@ -115,6 +119,7 @@ export function OrdersTable({ orders, isLoading }: OrderTableProps) {
   const [trackingNumber, setTrackingNumber] = useState("");
   const [isGeneratingInvoice, setIsGeneratingInvoice] = useState(false);
   const invoiceRef = useRef<HTMLDivElement>(null);
+  console.log(orders[0]);
 
   const filteredOrders = useMemo(() => {
     return orders.filter((order) => {
@@ -306,7 +311,7 @@ export function OrdersTable({ orders, isLoading }: OrderTableProps) {
     <TooltipProvider>
       <div className="space-y-4">
         {/* Filters */}
-        <div className="flex flex-wrap items-center gap-2">
+        {/* <div className="flex flex-wrap items-center gap-2">
           <div className="relative">
             <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
             <Input
@@ -354,7 +359,7 @@ export function OrdersTable({ orders, isLoading }: OrderTableProps) {
               Clear Filters
             </Button>
           )}
-        </div>
+        </div> */}
 
         {/* Table */}
         {filteredOrders.length === 0 ? (
@@ -493,7 +498,7 @@ export function OrdersTable({ orders, isLoading }: OrderTableProps) {
                   <h3 className="font-medium mb-2">Customer</h3>
                   <p>{viewingOrder.user_id?.name || "Unknown"}</p>
                   <p>{viewingOrder.user_id?.email || "—"}</p>
-                  <p>{viewingOrder.user_id?.phone || "—"}</p>
+                  <p>{viewingOrder.user_id?.phone_number || "—"}</p>
                 </div>
 
                 <div className="border p-4 rounded">
@@ -504,7 +509,8 @@ export function OrdersTable({ orders, isLoading }: OrderTableProps) {
                       className="flex justify-between border-b py-2"
                     >
                       <span>
-                        {item.product_name || item.name} × {item.quantity}
+                        {item.product_id.name} × {item.quantity}
+                        {/* {item.product_id.} × {item.quantity} */}
                       </span>
                       <span>{formatCurrency(item.quantity * item.price)}</span>
                     </div>
@@ -514,7 +520,7 @@ export function OrdersTable({ orders, isLoading }: OrderTableProps) {
                 <div className="border p-4 rounded">
                   <div className="flex justify-between">
                     <span>Subtotal</span>
-                    <span>{formatCurrency(viewingOrder.subtotal || 0)}</span>
+                    <span>{formatCurrency(viewingOrder.total || 0)}</span>
                   </div>
                   <div className="flex justify-between">
                     <span>Shipping</span>
@@ -528,7 +534,7 @@ export function OrdersTable({ orders, isLoading }: OrderTableProps) {
                   </div>
                   <div className="flex justify-between font-bold border-t pt-2">
                     <span>Total</span>
-                    <span>{formatCurrency(viewingOrder.total_amount || 0)}</span>
+                    <span>{formatCurrency(viewingOrder.total || 0)}</span>
                   </div>
                 </div>
 
