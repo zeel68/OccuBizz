@@ -98,6 +98,8 @@ export default function AddEditCategoryPage({ categoryId }: AddEditCategoryPageP
         fetchParentCategory();
         fetchAllCategories();
         if (categoryId) {
+            console.log(allCategories);
+
             // Find category from the categories array
             const category = allCategories.find(cat => cat._id === categoryId);
             if (category) {
@@ -130,7 +132,7 @@ export default function AddEditCategoryPage({ categoryId }: AddEditCategoryPageP
             formDataUpload.append("file", file);
             formDataUpload.append(
                 "upload_preset",
-                process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET || "BizzWeb",
+                process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET || "BizzPocket",
             );
             formDataUpload.append("folder", "ecommerce_uploads/categories");
 

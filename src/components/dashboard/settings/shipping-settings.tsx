@@ -68,8 +68,8 @@ export function ShippingSettings({ storeConfig }: ShippingSettingsProps) {
     useEffect(() => {
         console.log("Store Config", storeConfig);
 
-        if (storeConfig?.shipping_zones) {
-            setShippingZones(storeConfig.shipping_zones as any)
+        if (storeConfig?.config?.shipping_zones) {
+            setShippingZones(storeConfig.config?.shipping_zones as any)
         }
     }, [storeConfig])
 

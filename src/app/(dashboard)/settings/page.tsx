@@ -97,7 +97,7 @@ export default function SettingsPage() {
                     </CardHeader>
                     <CardContent>
                         <div className="text-2xl font-bold">
-                            {/* {storeConfig?.payment_methods!} */}
+                            {storeConfig?.config?.payment_methods.length || 0}
                             payment method
                         </div>
                         <p className="text-xs text-muted-foreground">
@@ -113,7 +113,7 @@ export default function SettingsPage() {
                     </CardHeader>
                     <CardContent>
                         <div className="text-2xl font-bold">
-                            {storeConfig?.shipping_zones?.length || 0}
+                            {storeConfig?.config?.shipping_zones?.length || 0}
                         </div>
                         <p className="text-xs text-muted-foreground">
                             Active zones

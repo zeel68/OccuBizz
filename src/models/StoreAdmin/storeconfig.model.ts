@@ -4,6 +4,7 @@ export interface iStoreConfig {
     description?: string
     logo_url?: string
     banner_url?: string
+    config: any,
     contact_info: {
         website: string
         email: string

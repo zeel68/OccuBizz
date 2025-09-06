@@ -12,9 +12,9 @@ export interface iOrder {
     _id: string;
     name: string;
     email: string;
-    phone?: string;
+    phone_number?: string;
   };
-  total_amount: number;
+  total: number;
   subtotal?: number;
   tax?: number;
   tax_amount: number;

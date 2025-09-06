@@ -22,6 +22,7 @@ interface StoreInfoSettingsProps {
 interface StoreInfoFormData {
     name: string
     description: string
+    config: any
     contact_info: {
         email: string
         phone: string
@@ -81,22 +82,22 @@ export function StoreInfoSettings({ storeConfig }: StoreInfoSettingsProps) {
                 name: storeConfig.name || "323",
                 description: storeConfig.description || "",
                 contact_info: {
-                    email: storeConfig.contact_info?.email || "",
-                    phone: storeConfig.contact_info?.phone || "",
-                    website: storeConfig.contact_info?.website || "",
+                    email: storeConfig.config?.contact_info?.email || "",
+                    phone: storeConfig.config?.contact_info?.phone || "",
+                    website: storeConfig.config?.contact_info?.website || "",
                 },
                 address: {
-                    street: storeConfig.address?.street || "",
-                    city: storeConfig.address?.city || "",
-                    state: storeConfig.address?.state || "",
-                    country: storeConfig.address?.country || "",
-                    postal_code: storeConfig.address?.postal_code || "",
+                    street: storeConfig.config?.address?.street || "",
+                    city: storeConfig.config?.address?.city || "",
+                    state: storeConfig.config?.address?.state || "",
+                    country: storeConfig.config?.address?.country || "",
+                    postal_code: storeConfig.config?.address?.postal_code || "",
                 },
                 social_media: {
-                    facebook: storeConfig.social_media?.facebook || "",
-                    twitter: storeConfig.social_media?.twitter || "",
-                    instagram: storeConfig.social_media?.instagram || "",
-                    linkedin: storeConfig.social_media?.linkedin || "",
+                    facebook: storeConfig.config?.social_media?.facebook || "",
+                    twitter: storeConfig.config?.social_media?.twitter || "",
+                    instagram: storeConfig.config?.social_media?.instagram || "",
+                    linkedin: storeConfig.config?.social_media?.linkedin || "",
                 },
             })
         }

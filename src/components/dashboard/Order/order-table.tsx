@@ -675,7 +675,7 @@ export function OrdersTable({ orders, isLoading }: OrderTableProps) {
                   <h2 className="text-lg font-semibold mb-2">Bill To:</h2>
                   <p>{viewingOrder.user_id?.name || "Customer"}</p>
                   <p>{viewingOrder.user_id?.email || "—"}</p>
-                  <p>{viewingOrder.user_id?.phone || "—"}</p>
+                  <p>{viewingOrder.user_id?.phone_number || "—"}</p>
                 </div>
 
                 <div>
@@ -731,7 +731,7 @@ export function OrdersTable({ orders, isLoading }: OrderTableProps) {
                 </div>
                 <div className="flex justify-between font-bold text-lg border-t pt-2">
                   <span>Total:</span>
-                  <span>{formatCurrency(viewingOrder.total_amount || 0)}</span>
+                  <span>{formatCurrency(viewingOrder.total || 0)}</span>
                 </div>
               </div>
 

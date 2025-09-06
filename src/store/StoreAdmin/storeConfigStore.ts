@@ -52,8 +52,9 @@ export const useStoreConfigStore = create<StoreConfigState>()(
                 set({ loading: true, error: null })
                 try {
                     const response = await apiClient.get('/store-admin/store/config') as ApiResponse<any>
-                    const res = await response;
+                    const res = response;
 
+                    console.log("res", res.data);
 
                     if (res.success) {
                         set({
@@ -79,14 +80,14 @@ export const useStoreConfigStore = create<StoreConfigState>()(
                 try {
 
                     console.log(config);
-
+                    
                     const response = await apiClient.put('/store-admin/store/config', {
                         config
                     }) as ApiResponse<any>
 
                     const data = response;
                     console.log(data.data);
-                    
+
                     if (data.success) {
                         set(state => ({
                             storeConfig: { ...state.storeConfig, ...data.data },

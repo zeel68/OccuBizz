@@ -87,9 +87,12 @@ export function PaymentSettings({ storeConfig }: PaymentSettingsProps) {
     const [methodConfig, setMethodConfig] = useState<Record<string, any>>({})
 
     useEffect(() => {
-        if (storeConfig?.payment_methods) {
+
+        if (storeConfig?.config?.payment_methods) {
+            console.log("Payment Methods", storeConfig?.config?.payment_methods);
+
             // Convert string array to PaymentMethod objects
-            const methods = storeConfig.payment_methods?.map((methodId: any, index: number) => {
+            const methods = storeConfig.config.payment_methods?.map((methodId: any, index: number) => {
                 const methodInfo = availablePaymentMethods.find(m => m.id === methodId)
                 return {
                     id: methodId,
@@ -181,10 +184,12 @@ export function PaymentSettings({ storeConfig }: PaymentSettingsProps) {
         try {
             const enabledMethods = paymentMethods.filter(m => m.enabled).map(m => m.id)
 
-            const formData = new FormData()
-            formData.append('payment_methods', JSON.stringify(enabledMethods))
-
-            await updateStoreConfig(formData as any)
+            // const formData = new FormData()
+            // formData.append('payment_methods', JSON.stringify(enabledMethods))
+            const paymentMethod = {
+                payment_methods: paymentMethods
+            }
+            await updateStoreConfig(paymentMethod as any)
             toast.success("Payment settings saved successfully")
         } catch (error: any) {
             toast.error(error.message || "Failed to save payment settings")
