@@ -108,7 +108,7 @@ interface OrderTableProps {
   isLoading: boolean;
 }
 
-export function OrdersTable({ orders, isLoading }: OrderTableProps) {
+export default function OrdersTable({ orders, isLoading }: OrderTableProps) {
   const { updateOrderStatus, loading: storeLoading } = useOrderStore();
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState("");
