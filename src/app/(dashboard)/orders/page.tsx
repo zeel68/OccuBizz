@@ -29,7 +29,8 @@ import {
   Calendar,
 } from "lucide-react";
 import { useOrderStore } from "@/store/StoreAdmin/orderStore";
-import { OrdersTable } from "@/components/dashboard/Order/order-table";
+import OrdersTable from "@/components/dashboard/Order/order-table";
+
 
 interface FilterState {
   search: string;
