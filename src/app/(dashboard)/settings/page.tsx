@@ -97,7 +97,7 @@ export default function SettingsPage() {
                     </CardHeader>
                     <CardContent>
                         <div className="text-2xl font-bold">
-                            {storeConfig?.config?.payment_methods.length || 0}
+                            {storeConfig?.config?.payment_methods?.length || 0}
                             payment method
                         </div>
                         <p className="text-xs text-muted-foreground">
