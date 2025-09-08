@@ -1,4 +1,5 @@
 "use client";
+import dynamic from 'next/dynamic';
 
 import { useState, useMemo, useRef, useEffect } from "react";
 import { format } from "date-fns";

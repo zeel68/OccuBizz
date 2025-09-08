@@ -22,7 +22,7 @@ interface ApiResponse<T> {
 
 class ApiClient {
     mode = process.env.NODE_ENV || "production";
-    private baseURL: string = "https://backend.bizzpocket.occubitsolution.com/api";
+    private baseURL: string = `http://backend.dhaneri.com/api`;
     private axiosInstance: AxiosInstance;
     constructor(config?: AxiosRequestConfig) {
         this.axiosInstance = axios.create({

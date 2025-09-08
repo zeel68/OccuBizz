@@ -20,11 +20,11 @@ interface OrderState {
   fetchOrder: (orderId: string) => Promise<void>;
   clearError: () => void;
 }
-// const session = await getSession();
+const session = await getSession();
 const apiClient = new ApiClient({
-  // headers: {
-  //   Authorization: `Bearer ${session?.user.accessToken}`,
-  // },
+  headers: {
+    Authorization: `Bearer ${session?.user.accessToken}`,
+  },
 });
 export const useOrderStore = create<OrderState>()(
   persist(
@@ -145,9 +145,9 @@ export const useOrderStore = create<OrderState>()(
     }),
     {
       name: "order-store",
-      partialize: (state) => ({
-        ordersInfo: state.ordersInfo,
-      }),
+      // partialize: (state) => ({
+      //   ordersInfo: state.ordersInfo,
+      // }),
     },
   ),
 );
