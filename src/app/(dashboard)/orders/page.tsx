@@ -119,7 +119,7 @@ export default function OrdersPage() {
       limit: itemsPerPage,
       ...appliedFilters,
     };
-    // fetchOrders(queryParams);
+    fetchOrders(queryParams);
   }, [appliedFilters, currentPage, itemsPerPage, fetchOrders]);
 
   const updateFilter = (key: keyof FilterState, value: string) => {
