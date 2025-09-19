@@ -152,16 +152,16 @@ export default function AddEditProductPage({ id }: { id?: string }) {
     const selectedCategoryId = form.watch("category")
     const selectedCategory = allCategories.find(cat => cat._id === selectedCategoryId)
     const categoryAttributes = normalizeFilters(selectedCategory?.config?.attributes)
-    console.log(categoryAttributes);
+    // console.log(categoryAttributes);
 
 
     // Fetch data
     useEffect(() => {
         if (productId) {
-            console.log("selec", productId);
+            // console.log("selec", productId);
             fetchProductById(productId)
-            console.log(selectedProduct);
-            console.log(selectedCategory);
+            // console.log(selectedProduct);
+            // console.log(selectedCategory);
 
         }
         if (allCategories.length === 0) {
@@ -172,7 +172,7 @@ export default function AddEditProductPage({ id }: { id?: string }) {
     // Populate form with product data
     useEffect(() => {
         if (selectedProduct) {
-            console.log("using old data");
+            //console.log("using old data");
 
             form.reset(selectedProduct as any)
             setTags(selectedProduct.tags || [])
@@ -540,21 +540,21 @@ export default function AddEditProductPage({ id }: { id?: string }) {
                 allow_backorder: data.stock.allow_backorder,
                 track_inventory: data.stock.track_inventory
             }
-            // console.log(data);
+            // //console.log(data);
             if (productId) {
                 await updateProduct(productId ?? "", data)
 
                 toast.success("Product updated successfully")
             } else {
                 await createProduct(data);
-                console.log(error);
+                //console.log(error);
 
                 if (!error) {
-                    console.log(error);
+                    //console.log(error);
                     toast.success("Product added successfully")
                 }
                 else {
-                    console.log(error);
+                    //console.log(error);
                     toast.success(error)
                 }
             }
@@ -571,8 +571,8 @@ export default function AddEditProductPage({ id }: { id?: string }) {
         if (!variant) return null
         const size = variant.sizes.find(s => s.id === sizeId)
         if (!size) return null
-        const value = size.attributes[attribute.name]
-        console.log(variant);
+        const value = size.attributes[0][attribute.name]
+        // console.log(size);
 
         switch (attribute.type) {
             case "text":
