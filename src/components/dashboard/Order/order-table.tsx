@@ -510,7 +510,7 @@ export default function OrdersTable({ orders, isLoading }: OrderTableProps) {
                       className="flex justify-between border-b py-2"
                     >
                       <span>
-                        {item.product_id.name} × {item.quantity}
+                        {item.product_id.name} {item?.variant_id?.color} × {item.quantity}
                         {/* {item.product_id.} × {item.quantity} */}
                       </span>
                       <span>{formatCurrency(item.quantity * item.price)}</span>
