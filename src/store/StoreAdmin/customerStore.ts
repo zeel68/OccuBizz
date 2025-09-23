@@ -1,4 +1,5 @@
 // stores/customerStore.ts
+import apiClient from "@/lib/apiCalling";
 import ApiClient from "@/lib/apiCalling";
 import { ApiResponse } from "@/models/api.model";
 import { iCustomersInfo } from "@/models/StoreAdmin/customer.model";
@@ -24,11 +25,6 @@ interface CustomerState {
 // Async function to initialize the store with session handling
 const initializeStore = async () => {
     const session = await getSession();
-    const apiClient = new ApiClient({
-        headers: {
-            Authorization: `Bearer ${session?.user.accessToken}`,
-        },
-    });
 
     return create<CustomerState>()(
         persist(

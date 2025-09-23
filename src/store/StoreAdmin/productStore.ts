@@ -7,6 +7,7 @@ import ApiClient from "@/lib/apiCalling"
 import { iProduct, iProductFilters, iProductInfo, iProductStats, iProductVariant } from "@/models/StoreAdmin/product.model"
 import { ApiResponse } from "@/models/api.model"
 import { error } from "console"
+import apiClient from "@/lib/apiCalling"
 
 interface ProductState {
     // State
@@ -36,11 +37,7 @@ interface ProductState {
 }
 
 const session = await getSession();
-const apiClient = new ApiClient({
-    headers: {
-        Authorization: `Bearer ${session?.user.accessToken}`,
-    },
-});
+
 
 export const useProductStore = create<ProductState>()(
     devtools(

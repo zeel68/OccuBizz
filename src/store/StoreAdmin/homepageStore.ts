@@ -1,3 +1,4 @@
+import apiClient from '@/lib/apiCalling'
 import ApiClient from '@/lib/apiCalling'
 import { ApiResponse } from '@/models/api.model'
 import { iHomepageConfig, iHeroSlide, iTrendingCategory, iTrendingProduct, iTestimonial, iHeroSlideForm, iTestimonialForm } from '@/models/StoreAdmin/homepage.model'
@@ -59,11 +60,7 @@ interface HomepageState {
 }
 
 const session = await getSession();
-const apiClient = new ApiClient({
-    headers: {
-        Authorization: `Bearer ${session?.user.accessToken}`,
-    },
-});
+
 
 export const useHomepageStore = create<HomepageState>()(
     devtools(

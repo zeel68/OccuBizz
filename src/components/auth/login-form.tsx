@@ -79,8 +79,9 @@ export const LoginForm = () => {
                 role,
                 accessToken,
                 refreshToken
-              },
-              accessToken
+              } as any,
+              accessToken,
+              refreshToken
             );
 
             setSuccess("Logged in successfully!");
@@ -96,7 +97,6 @@ export const LoginForm = () => {
                 case OWNER_ROLE_ID:
                   router.push("/");
                   break;
-                case CUSTOMER_ROLE_ID:
                 default:
                   router.push("/");
                   break;

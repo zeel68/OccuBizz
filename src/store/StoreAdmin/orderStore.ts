@@ -5,6 +5,7 @@ import ApiClient from "@/lib/apiCalling";
 import { getSession } from "next-auth/react";
 import { iOrdersInfo } from "@/models/StoreAdmin/order.model";
 import { ApiResponse } from "@/models/api.model";
+import apiClient from "@/lib/apiCalling";
 
 interface OrderState {
   ordersInfo: iOrdersInfo | null;
@@ -21,11 +22,7 @@ interface OrderState {
   clearError: () => void;
 }
 const session = await getSession();
-const apiClient = new ApiClient({
-  headers: {
-    Authorization: `Bearer ${session?.user.accessToken}`,
-  },
-});
+
 export const useOrderStore = create<OrderState>()(
   persist(
     (set, get) => ({

@@ -1,3 +1,4 @@
+import apiClient from '@/lib/apiCalling'
 import ApiClient from '@/lib/apiCalling'
 import { ApiResponse } from '@/models/api.model'
 import { iStoreTheme, iStoreFeatures, iStoreConfig } from '@/models/StoreAdmin/storeconfig.model'
@@ -31,11 +32,7 @@ interface StoreConfigState {
 }
 
 const session = await getSession();
-const apiClient = new ApiClient({
-    headers: {
-        Authorization: `Bearer ${session?.user?.accessToken || ''}`,
-    },
-});
+
 export const useStoreConfigStore = create<StoreConfigState>()(
     devtools(
         (set, get) => ({
@@ -80,7 +77,7 @@ export const useStoreConfigStore = create<StoreConfigState>()(
                 try {
 
                     console.log(config);
-                    
+
                     const response = await apiClient.put('/store-admin/store/config', {
                         config
                     }) as ApiResponse<any>

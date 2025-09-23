@@ -92,9 +92,9 @@ interface AddEditProductPageProps {
 export default function AddEditProductPage({ id }: { id?: string }) {
     const productId = id;
     const router = useRouter()
-    const { updateProduct, createProduct, loading, fetchProductById, selectedProduct, error } = useProductStore()
+    const { updateProduct, createProduct, fetchProductById, selectedProduct, error } = useProductStore()
     const { allCategories, fetchAllCategories } = useCategoryStore()
-
+    const [loading, setLoading] = useState<boolean>(false);
     const [activeTab, setActiveTab] = useState("basic")
     const [mainImages, setMainImages] = useState<(File | string)[]>([])
     const [mainPrimaryIndex, setMainPrimaryIndex] = useState(0)
@@ -505,7 +505,7 @@ export default function AddEditProductPage({ id }: { id?: string }) {
     const onSubmit = async (data: iProductFormData) => {
         try {
             // Upload main images
-
+            setLoading(true);
             const mainImageUrls = await uploadMultipleToCloudinary(mainImages)
 
             // Upload variant images
@@ -550,19 +550,24 @@ export default function AddEditProductPage({ id }: { id?: string }) {
                 //console.log(error);
 
                 if (!error) {
-                    //console.log(error);
                     toast.success("Product added successfully")
+                    setLoading(false)
+
                 }
                 else {
-                    //console.log(error);
                     toast.success(error)
+                    setLoading(false)
+
                 }
             }
             if (!error) {
+                setLoading(false)
                 router.push("/products")
             }
         } catch (error: any) {
             toast.error(error.message || "Failed to save product")
+            setLoading(false)
+
         }
     };
 

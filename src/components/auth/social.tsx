@@ -32,8 +32,9 @@ export const SocialLogin = ({ showGoogle, showFacebook, showTwitter }: SocialLog
                     role: session.user.role,
                     accessToken: session.user.accessToken,
                     refreshToken: session.user.refreshToken,
-                },
+                } as any,
                 session.user.accessToken,
+                session.user.refreshToken,
             )
 
             // Redirect based on role

@@ -10,18 +10,7 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
 }
 
-export async function refreshToken() {
-  const apiClient = new ApiClient();
-  const { user, setTokens } = useUserStore();
-  const res = await apiClient.post("/auth/refreshToken", { refreshToken: user?.refreshToken }) as ApiResponse<any>
-  console.log("refresh token res", res);
 
-  if (res.success) {
-    setTokens(res.data.data.accessToken, res.data.data.refreshToken);
-  } else {
-    toast.error("somthing went wrong," + res.error);
-  }
-}
 
 
 

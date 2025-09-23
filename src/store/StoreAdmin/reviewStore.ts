@@ -1,4 +1,5 @@
 // stores/ReviewStore.ts
+import apiClient from "@/lib/apiCalling";
 import ApiClient from "@/lib/apiCalling";
 import { ApiResponse } from "@/models/api.model";
 import { iReviewsInfo } from "@/models/StoreAdmin/review.model";
@@ -22,11 +23,6 @@ interface ReviewState {
   deleteReview: (id: string) => Promise<void>;
 }
 const session = await getSession();
-const apiClient = new ApiClient({
-  headers: {
-    Authorization: `Bearer ${session?.user.accessToken}`,
-  },
-});
 
 export const useReviewStore = create<ReviewState>()(
   persist(

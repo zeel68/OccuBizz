@@ -1,5 +1,6 @@
 "use client"
 
+import apiClient from "@/lib/apiCalling"
 import ApiClient from "@/lib/apiCalling"
 import { ApiResponse } from "@/models/api.model"
 import { iDashboardData, iSalesAnalytics, iTopSellingProduct, iCustomerAnalytics, iInventoryAnalytics, iCustomerBehaviorAnalytics, iProductPerformanceAnalytics, iGeographicAnalytics, iRealTimeAnalytics, iConversionFunnelAnalytics } from "@/models/StoreAdmin/analytics.model"
@@ -45,11 +46,7 @@ interface iAnalyticsState {
 }
 
 const session = await getSession();
-const apiClient = new ApiClient({
-    headers: {
-        Authorization: `Bearer ${session?.user.accessToken}`,
-    },
-});
+
 export const useAnalyticsStore = create<iAnalyticsState>()(
 
     devtools(

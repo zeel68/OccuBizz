@@ -5,6 +5,7 @@ import { persist } from "zustand/middleware";
 import ApiClient from "@/lib/apiCalling";
 import { getSession } from "next-auth/react";
 import { iStoreCategory } from "@/models/StoreAdmin/category.model";
+import apiClient from "@/lib/apiCalling";
 
 interface CategoryState {
     categories: iStoreCategory[];
@@ -24,12 +25,7 @@ interface CategoryState {
     clearError: () => void;
 }
 const session = await getSession();
-const apiClient = new ApiClient({
-    headers: {
-        Authorization: `Bearer ${session?.user.accessToken}`,
-        
-    },
-});
+
 export const useCategoryStore = create<CategoryState>()(
     persist(
         (set, get) => ({

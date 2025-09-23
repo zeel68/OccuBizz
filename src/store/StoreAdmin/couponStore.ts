@@ -1,3 +1,4 @@
+import apiClient from "@/lib/apiCalling";
 import ApiClient from "@/lib/apiCalling";
 import { ApiResponse } from "@/models/api.model";
 import { iCouponiInfo } from "@/models/StoreAdmin/coupon.model";
@@ -19,14 +20,7 @@ interface CouponState {
   clearError: () => void;
 }
 
-const createApiClient = async () => {
-  const session = await getSession();
-  return new ApiClient({
-    headers: {
-      Authorization: `Bearer ${session?.user?.accessToken || ''}`,
-    },
-  });
-};
+
 
 export const useCouponStore = create<CouponState>()(
   persist(
@@ -39,7 +33,7 @@ export const useCouponStore = create<CouponState>()(
       fetchCoupons: async (query: any) => {
         set({ loading: true, error: null });
         try {
-          const apiClient = await createApiClient();
+
 
           const searchParams = new URLSearchParams();
           Object.entries(query).forEach(([key, value]) => {
@@ -77,7 +71,7 @@ export const useCouponStore = create<CouponState>()(
       createCoupon: async (couponData: any) => {
         set({ loading: true, error: null });
         try {
-          const apiClient = await createApiClient();
+
 
           const response = await apiClient.post(
             "/store-admin/coupons",
@@ -109,7 +103,6 @@ export const useCouponStore = create<CouponState>()(
       updateCoupon: async (id: string, couponData: any) => {
         set({ loading: true, error: null });
         try {
-          const apiClient = await createApiClient();
 
           const response = await apiClient.put(
             `/store-admin/coupons/${id}`,
@@ -151,7 +144,6 @@ export const useCouponStore = create<CouponState>()(
       deleteCoupon: async (id: string) => {
         set({ loading: true, error: null });
         try {
-          const apiClient = await createApiClient();
 
           const response = await apiClient.delete(`/store-admin/coupons/${id}`);
 
@@ -187,7 +179,6 @@ export const useCouponStore = create<CouponState>()(
       duplicateCoupon: async (id: string, newCode: string) => {
         set({ loading: true, error: null });
         try {
-          const apiClient = await createApiClient();
 
           const response = await apiClient.post(
             `/store-admin/coupons/${id}/duplicate`,
@@ -218,7 +209,6 @@ export const useCouponStore = create<CouponState>()(
       deactivateCoupon: async (id: string) => {
         set({ loading: true, error: null });
         try {
-          const apiClient = await createApiClient();
 
           const response = await apiClient.post(
             `/store-admin/coupons/deactivate/${id}`,

@@ -7,11 +7,12 @@ import { iUser } from "./models/user.model";
 import { ApiResponse, iLoginResponseData } from "./models/api.model";
 
 import { JWT } from "next-auth/jwt"
+import apiClient from "./lib/apiCalling";
 
 export async function refreshToken(token: JWT): Promise<JWT | null> {
   try {
     // Call your backend refresh endpoint
-    const response = await fetch(`${process.env.API_URL}/auth/refresh`, {
+    const response = await fetch(`https:backend.dhaneri.com/api/auth/refresh`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -59,8 +60,8 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         }
 
         try {
-          const client = new ApiClient()
-          const apiResponse = await client.post("/auth/login", {
+
+          const apiResponse = await apiClient.post("/auth/login", {
             email: credentials.email,
             password: credentials.password,
           })
@@ -103,11 +104,9 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     async signIn({ user, account }) {
       if (account?.provider === "google" && user.email) {
         try {
-          const client = new ApiClient({
-            headers: { "Content-Type": "application/json" },
-          })
 
-          const apiResponse = await client.post("/users/login", {
+
+          const apiResponse = await apiClient.post("/users/login", {
             email: user.email,
             name: user.name,
             isGoogleLogin: true,
