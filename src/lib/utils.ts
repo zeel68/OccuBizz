@@ -9,7 +9,59 @@ import { toast } from "sonner";
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
 }
+export type RawValue =
+  | null
+  | string
+  | {
+    name?: string
+    type?: string
+    options?: string[]
+    is_required?: boolean
+  }
 
+export type Field = {
+  name: string
+  type: string
+  options: string[]
+  is_required: boolean
+}
+
+export function normalizeFilters(raw: any): any[] {
+  if (!raw) return []
+  if (Array.isArray(raw)) {
+    return raw.map(item => {
+      if (!item) return { name: "", type: "text", options: [], is_required: false }
+      const name = item.name ?? item.key ?? ""
+      const type = item.type ?? "text"
+      const options = Array.isArray(item.options) ? item.options : []
+      const is_required = !!item.is_required
+      return { name, type, options, is_required }
+    })
+  }
+  if (typeof raw === "object") {
+    return transformRaw(raw)
+  }
+  return []
+}
+
+function transformRaw(raw: Record<string, RawValue>): any {
+  return Object.entries(raw).map(([key, val]): Field => {
+    if (val == null) {
+      return { name: key, type: "text", options: [], is_required: false }
+    }
+    if (typeof val === "string") {
+      return { name: key, type: "text", options: [], is_required: false }
+    }
+
+    // val is object here
+    const type = val.type ?? "text"
+    const options = Array.isArray(val.options) ? val.options : []
+    const is_required = !!val.is_required
+    const name = val.name ?? key
+
+    return { name, type, options, is_required }
+  })
+}
 
 
 
