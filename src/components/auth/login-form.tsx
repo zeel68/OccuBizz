@@ -48,7 +48,6 @@ export const LoginForm = () => {
         });
 
         if (result?.error) {
-          console.error("Sign-in error:", result.error);
           setError("Invalid credentials. Please check your email and password.");
           toast.error("Login failed", {
             description: "Invalid credentials. Please try again.",

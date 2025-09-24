@@ -12,7 +12,7 @@ import apiClient from "./lib/apiCalling";
 export async function refreshToken(token: JWT): Promise<JWT | null> {
   try {
     // Call your backend refresh endpoint
-    const response = await fetch(`https:backend.dhaneri.com/api/auth/refresh`, {
+    const response = await fetch(`https://backend.dhaneri.com/api/auth/refresh`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
