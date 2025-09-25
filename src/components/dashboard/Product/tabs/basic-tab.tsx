@@ -1,229 +1,348 @@
-// import { useCallback, useState } from "react"
-// import { UseFormReturn } from "react-hook-form"
-// import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-// import { Input } from "@/components/ui/input"
-// import { Label } from "@/components/ui/label"
-// import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-// import { Badge } from "@/components/ui/badge"
-// import { Button } from "@/components/ui/button"
-// import { Textarea } from "@/components/ui/textarea"
-// import { Package, ImageIcon, Tag, Plus, X } from 'lucide-react'
+// tabs/BasicTab.tsx
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { Button } from "@/components/ui/button"
+import { Badge } from "@/components/ui/badge"
+import { Alert, AlertDescription } from "@/components/ui/alert"
+import { Textarea } from "@/components/ui/textarea"
+import { Package, ImageIcon, Tag, Settings, X, Plus, AlertTriangle } from 'lucide-react'
+import { UseFormReturn } from "react-hook-form"
+import { ProductFormData, Specification } from "@/types/product.types"
+import ImageUpload from "@/components/shared/image-upload"
+import { RichTextEditor } from "@/components/ui/rich-text-editor"
+import { useState } from "react"
 
-// import { RichTextEditor } from "@/components/ui/rich-text-editor"
-// import ImageUpload from "@/components/shared/image-upload"
-// import { iProductFormData } from "@/models/StoreAdmin/product.model"
-// import { iCategory } from "@/models/StoreAdmin/category.model"
+interface BasicTabProps {
+    form: UseFormReturn<ProductFormData>
+    loading: boolean
+    formErrors: Record<string, string>
+    setFormErrors: (errors: Record<string, string>) => void
+    validateForm: () => boolean
+    allCategories: any[]
+    tags: string[]
+    setTags: (tags: string[]) => void
+    specifications: Specification[]
+    setSpecifications: (specs: Specification[]) => void
+    mainImages: (File | string)[]
+    setMainImages: (images: (File | string)[]) => void
+    mainPrimaryIndex: number
+    setMainPrimaryIndex: (index: number) => void
+}
 
-// interface BasicTabProps {
-//     form: UseFormReturn<iProductFormData>
-//     loading: boolean
-//     allCategories: iCategory[]
-//     mainImages: (File | string)[]
-//     mainPrimaryIndex: number
-//     tags: string[]
-//     setMainImages: (images: (File | string)[]) => void
-//     setMainPrimaryIndex: (index: number) => void
-//     setTags: (tags: string[]) => void
-//     handleNumberChange: (field: string, value: string) => void
-// }
+export function BasicTab({
+    form,
+    loading,
+    formErrors,
+    allCategories,
+    tags,
+    setTags,
+    specifications,
+    setSpecifications,
+    mainImages,
+    setMainImages,
+    mainPrimaryIndex,
+    setMainPrimaryIndex
+}: BasicTabProps) {
+    const [newTag, setNewTag] = useState('')
+    const [newSpecification, setNewSpecification] = useState<Specification>({ key: '', value: '' })
 
-// export default function BasicTab({
-//     form,
-//     loading,
-//     allCategories,
-//     mainImages,
-//     mainPrimaryIndex,
-//     tags,
-//     setMainImages,
-//     setMainPrimaryIndex,
-//     setTags,
-//     handleNumberChange
-// }: BasicTabProps) {
-//     const [newTag, setNewTag] = useState("")
+    const handleNumberChange = (field: keyof ProductFormData, value: string) => {
+        const num = value === '' ? 0 : Number(value)
+        form.setValue(field, num as any)
+    }
 
-//     // Main image handling
-//     const handleMainImageSelect = useCallback((files: File[]) => {
-//         setMainImages((prev) => [...prev, ...files])
-//     }, [setMainImages])
+    const addTag = () => {
+        const trimmed = newTag.trim().toLowerCase()
+        if (trimmed && !tags.some(tag => tag.toLowerCase() === trimmed)) {
+            setTags([...tags, trimmed])
+            setNewTag('')
+        }
+    }
 
-//     const handleMainImageRemove = useCallback((index: number) => {
-//         setMainImages((prev) => prev.filter((_, i) => i !== index))
-//         setMainPrimaryIndex(prev => (index === prev ? 0 : prev > index ? prev - 1 : prev))
-//     }, [setMainImages, setMainPrimaryIndex])
+    const removeTag = (tagToRemove: string) => {
+        setTags(tags.filter(tag => tag !== tagToRemove))
+    }
 
-//     const handleMainSetPrimaryImage = useCallback((index: number) => {
-//         setMainPrimaryIndex(index)
-//     }, [setMainPrimaryIndex])
+    const addSpecification = () => {
+        const { key, value } = newSpecification
+        const trimmedKey = key.trim()
+        const trimmedValue = value.trim()
 
-//     // Tag management
-//     const addTag = useCallback(() => {
-//         const trimmed = newTag.trim()
-//         if (trimmed && !tags.includes(trimmed)) {
-//             setTags(prev => [...prev, trimmed])
-//             setNewTag("")
-//         }
-//     }, [newTag, tags, setTags])
+        if (trimmedKey && trimmedValue) {
+            if (specifications.some(spec => spec.key === trimmedKey)) {
+                alert(`Specification "${trimmedKey}" already exists`)
+                return
+            }
+            setSpecifications([...specifications, { key: trimmedKey, value: trimmedValue }])
+            setNewSpecification({ key: '', value: '' })
+        }
+    }
 
-//     const removeTag = useCallback((tag: string) => {
-//         setTags((prev: any) => prev.filter(t => t !== tag))
-//     }, [setTags])
+    const removeSpecification = (index: number) => {
+        setSpecifications(specifications.filter((_, i) => i !== index))
+    }
 
-//     return (
-//         <div className="space-y-6">
-//             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-//                 <Card>
-//                     <CardHeader>
-//                         <CardTitle className="flex items-center gap-2">
-//                             <Package className="h-5 w-5" />
-//                             Product Details
-//                         </CardTitle>
-//                     </CardHeader>
-//                     <CardContent className="space-y-4">
-//                         <div className="space-y-2">
-//                             <Label htmlFor="name">Product Name *</Label>
-//                             <Input
-//                                 id="name"
-//                                 {...form.register("name", { required: "Product name is required" })}
-//                                 placeholder="Enter product name"
-//                                 disabled={loading}
-//                             />
-//                             {form.formState.errors.name && (
-//                                 <p className="text-sm text-red-500">{form.formState.errors.name.message}</p>
-//                             )}
-//                         </div>
+    const handleMainImageSelect = (files: File[]) => {
+        setMainImages([...mainImages, ...files])
+    }
 
-//                         <div className="space-y-2">
-//                             <Label htmlFor="category">Category</Label>
-//                             <Select
-//                                 value={form.watch("category") || ""}
-//                                 onValueChange={(value) => form.setValue("category", value)}
-//                                 disabled={loading}
-//                             >
-//                                 <SelectTrigger>
-//                                     <SelectValue placeholder="Select category" />
-//                                 </SelectTrigger>
-//                                 <SelectContent>
-//                                     {allCategories.map((category) => (
-//                                         <SelectItem key={category._id} value={category._id}>
-//                                             {category.display_name}
-//                                         </SelectItem>
-//                                     ))}
-//                                 </SelectContent>
-//                             </Select>
-//                         </div>
+    const handleMainImageRemove = (index: number) => {
+        setMainImages(mainImages.filter((_, i) => i !== index))
+        setMainPrimaryIndex(index === mainPrimaryIndex ? 0 : mainPrimaryIndex > index ? mainPrimaryIndex - 1 : mainPrimaryIndex)
+    }
 
-//                         <div className="grid grid-cols-2 gap-4">
-//                             <div className="space-y-2">
-//                                 <Label htmlFor="brand">Brand</Label>
-//                                 <Input
-//                                     id="brand"
-//                                     {...form.register("brand")}
-//                                     placeholder="Enter brand name"
-//                                     disabled={loading}
-//                                 />
-//                             </div>
-//                             <div className="space-y-2">
-//                                 <Label htmlFor="sku">SKU</Label>
-//                                 <Input
-//                                     id="sku"
-//                                     {...form.register("sku")}
-//                                     placeholder="Enter product SKU"
-//                                     disabled={loading}
-//                                 />
-//                             </div>
-//                         </div>
+    const handleMainSetPrimaryImage = (index: number) => {
+        setMainPrimaryIndex(index)
+    }
 
-//                         <div className="grid grid-cols-2 gap-4">
-//                             <div className="space-y-2">
-//                                 <Label htmlFor="GST">GST</Label>
-//                                 <Input
-//                                     id="GST"
-//                                     {...form.register("GST")}
-//                                     placeholder="Enter GST %"
-//                                     disabled={loading}
-//                                 />
-//                             </div>
-//                             <div className="space-y-2">
-//                                 <Label htmlFor="HSNCode">HSN Code</Label>
-//                                 <Input
-//                                     id="HSNCode"
-//                                     {...form.register("HSNCode")}
-//                                     placeholder="Enter product HSN code"
-//                                     disabled={loading}
-//                                 />
-//                             </div>
-//                         </div>
+    return (
+        <div className="space-y-6">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <Card className="shadow-sm">
+                    <CardHeader>
+                        <CardTitle className="flex items-center gap-2">
+                            <Package className="h-5 w-5" />
+                            Product Details
+                        </CardTitle>
+                    </CardHeader>
+                    <CardContent className="space-y-4">
+                        <div className="space-y-2">
+                            <Label htmlFor="name" className="flex items-center gap-1">
+                                Product Name
+                                <span className="text-red-500">*</span>
+                            </Label>
+                            <Input
+                                id="name"
+                                {...form.register("name")}
+                                placeholder="Enter product name"
+                                disabled={loading}
+                                className={formErrors.name ? "border-red-500" : ""}
+                            />
+                            {formErrors.name && (
+                                <p className="text-sm text-red-500 flex items-center gap-1">
+                                    <AlertTriangle className="h-3 w-3" />
+                                    {formErrors.name}
+                                </p>
+                            )}
+                        </div>
 
-//                         <div className="space-y-2">
-//                             <RichTextEditor
-//                                 label="Description"
-//                                 value={form.watch("description") || ""}
-//                                 onChange={(value) => form.setValue("description", value)}
-//                                 placeholder="Describe your product in detail..."
-//                                 disabled={loading}
-//                             />
-//                         </div>
-//                     </CardContent>
-//                 </Card>
+                        <div className="space-y-2">
+                            <Label htmlFor="category">Category</Label>
+                            <Select
+                                value={form.watch("category") || ""}
+                                onValueChange={(value) => form.setValue("category", value)}
+                                disabled={loading}
+                            >
+                                <SelectTrigger>
+                                    <SelectValue placeholder="Select category" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    {allCategories.map((category) => (
+                                        <SelectItem key={category._id} value={category._id}>
+                                            {category.display_name}
+                                        </SelectItem>
+                                    ))}
+                                </SelectContent>
+                            </Select>
+                        </div>
 
-//                 <Card>
-//                     <CardHeader>
-//                         <CardTitle className="flex items-center gap-2">
-//                             <ImageIcon className="h-5 w-5" />
-//                             Product Images
-//                         </CardTitle>
-//                     </CardHeader>
-//                     <CardContent>
-//                         <ImageUpload
-//                             onSelectFiles={handleMainImageSelect}
-//                             onRemove={handleMainImageRemove}
-//                             onSetPrimary={handleMainSetPrimaryImage}
-//                             value={mainImages}
-//                             primaryIndex={mainPrimaryIndex}
-//                             multiple={true}
-//                             showPreview={true}
-//                             disabled={loading}
-//                             showLocalPreview={true}
-//                         />
-//                     </CardContent>
-//                 </Card>
-//             </div>
+                        <div className="grid grid-cols-2 gap-4">
+                            <div className="space-y-2">
+                                <Label htmlFor="brand">Brand</Label>
+                                <Input
+                                    id="brand"
+                                    {...form.register("brand")}
+                                    placeholder="Enter brand name"
+                                    disabled={loading}
+                                />
+                            </div>
+                            <div className="space-y-2">
+                                <Label htmlFor="sku">SKU</Label>
+                                <Input
+                                    id="sku"
+                                    {...form.register("sku")}
+                                    placeholder="Enter product SKU"
+                                    disabled={loading}
+                                />
+                            </div>
+                        </div>
 
-//             <Card>
-//                 <CardHeader>
-//                     <CardTitle className="flex items-center gap-2">
-//                         <Tag className="h-5 w-5" />
-//                         Tags
-//                     </CardTitle>
-//                 </CardHeader>
-//                 <CardContent className="space-y-4">
-//                     <div className="flex gap-2">
-//                         <Input
-//                             value={newTag}
-//                             onChange={(e) => setNewTag(e.target.value)}
-//                             placeholder="Add a tag"
-//                             onKeyPress={(e) => e.key === "Enter" && (e.preventDefault(), addTag())}
-//                             disabled={loading}
-//                         />
-//                         <Button type="button" onClick={addTag} variant="outline" disabled={loading}>
-//                             <Plus className="h-4 w-4" />
-//                         </Button>
-//                     </div>
-//                     {tags.length > 0 && (
-//                         <div className="flex flex-wrap gap-2">
-//                             {tags.map((tag, index) => (
-//                                 <Badge key={index} variant="secondary" className="flex items-center gap-1">
-//                                     {tag}
-//                                     <X
-//                                         className="h-3 w-3 cursor-pointer"
-//                                         onClick={() => removeTag(tag)}
-//                                     />
-//                                 </Badge>
-//                             ))}
-//                         </div>
-//                     )}
-//                 </CardContent>
-//             </Card>
-//         </div>
-//     )
-// }
+                        <div className="grid grid-cols-2 gap-4">
+                            <div className="space-y-2">
+                                <Label htmlFor="GST">GST (%)</Label>
+                                <Input
+                                    id="GST"
+                                    {...form.register("GST")}
+                                    placeholder="Enter GST percentage"
+                                    disabled={loading}
+                                    type="number"
+                                    min="0"
+                                    max="100"
+                                    step="0.1"
+                                />
+                            </div>
+                            <div className="space-y-2">
+                                <Label htmlFor="HSNCode">HSN Code</Label>
+                                <Input
+                                    id="HSNCode"
+                                    {...form.register("HSNCode")}
+                                    placeholder="Enter HSN code"
+                                    disabled={loading}
+                                />
+                            </div>
+                        </div>
+
+                        <div className="space-y-2">
+                            <Label>Description</Label>
+                            <RichTextEditor
+                                value={form.watch("description") || ""}
+                                onChange={(value) => form.setValue("description", value)}
+                                placeholder="Describe your product in detail..."
+                                disabled={loading}
+                            />
+                        </div>
+                    </CardContent>
+                </Card>
+
+                <Card className="shadow-sm">
+                    <CardHeader>
+                        <CardTitle className="flex items-center gap-2">
+                            <ImageIcon className="h-5 w-5" />
+                            Product Images
+                        </CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                        <ImageUpload
+                            onSelectFiles={handleMainImageSelect}
+                            onRemove={handleMainImageRemove}
+                            onSetPrimary={handleMainSetPrimaryImage}
+                            value={mainImages}
+                            primaryIndex={mainPrimaryIndex}
+                            multiple={true}
+                            showPreview={true}
+                            disabled={loading}
+                            showLocalPreview={true}
+                            maxFiles={10}
+                        // accept="image/*"
+                        />
+                        <p className="text-sm text-muted-foreground mt-2">
+                            Upload up to 10 images. First image will be used as primary.
+                        </p>
+                    </CardContent>
+                </Card>
+            </div>
+
+            <Card className="shadow-sm">
+                <CardHeader>
+                    <CardTitle className="flex items-center gap-2">
+                        <Tag className="h-5 w-5" />
+                        Tags
+                    </CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                    <div className="flex gap-2">
+                        <Input
+                            value={newTag}
+                            onChange={(e) => setNewTag(e.target.value)}
+                            placeholder="Add a tag"
+                            onKeyDown={(e) => {
+                                if (e.key === "Enter") {
+                                    e.preventDefault()
+                                    addTag()
+                                }
+                            }}
+                            disabled={loading}
+                            className="flex-1"
+                        />
+                        <Button
+                            type="button"
+                            onClick={addTag}
+                            variant="outline"
+                            disabled={loading || !newTag.trim()}
+                        >
+                            <Plus className="h-4 w-4" />
+                        </Button>
+                    </div>
+                    {tags.length > 0 && (
+                        <div className="flex flex-wrap gap-2">
+                            {tags.map((tag, index) => (
+                                <Badge key={index} variant="secondary" className="flex items-center gap-1 px-3 py-1">
+                                    {tag}
+                                    <Button
+                                        type="button"
+                                        variant="ghost"
+                                        size="sm"
+                                        className="h-auto p-0 ml-2"
+                                        onClick={() => removeTag(tag)}
+                                        disabled={loading}
+                                    >
+                                        <X className="h-3 w-3" />
+                                    </Button>
+                                </Badge>
+                            ))}
+                        </div>
+                    )}
+                </CardContent>
+            </Card>
+
+            <Card className="shadow-sm">
+                <CardHeader>
+                    <CardTitle className="flex items-center gap-2">
+                        <Settings className="h-5 w-5" />
+                        Specifications
+                    </CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                    <div className="grid grid-cols-2 gap-2">
+                        <Input
+                            value={newSpecification.key}
+                            onChange={(e) => setNewSpecification(prev => ({ ...prev, key: e.target.value }))}
+                            placeholder="Specification name"
+                            disabled={loading}
+                        />
+                        <div className="flex gap-2">
+                            <Input
+                                value={newSpecification.value}
+                                onChange={(e) => setNewSpecification(prev => ({ ...prev, value: e.target.value }))}
+                                placeholder="Specification value"
+                                disabled={loading}
+                                className="flex-1"
+                            />
+                            <Button
+                                type="button"
+                                onClick={addSpecification}
+                                variant="outline"
+                                disabled={loading || !newSpecification.key.trim() || !newSpecification.value.trim()}
+                            >
+                                <Plus className="h-4 w-4" />
+                            </Button>
+                        </div>
+                    </div>
+                    {specifications.length > 0 && (
+                        <div className="space-y-2">
+                            {specifications.map((spec, index) => (
+                                <div key={index} className="flex items-center justify-between p-3 border rounded-md bg-muted/20">
+                                    <span className="font-medium">{spec.key}:</span>
+                                    <div className="flex items-center gap-3">
+                                        <span className="text-muted-foreground">{spec.value}</span>
+                                        <Button
+                                            type="button"
+                                            variant="ghost"
+                                            size="sm"
+                                            onClick={() => removeSpecification(index)}
+                                            disabled={loading}
+                                        >
+                                            <X className="h-4 w-4" />
+                                        </Button>
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                    )}
+                </CardContent>
+            </Card>
+        </div>
+    )
+}

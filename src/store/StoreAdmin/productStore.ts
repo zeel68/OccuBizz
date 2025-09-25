@@ -36,7 +36,6 @@ interface ProductState {
     clearSelectedProduct: () => void
 }
 
-const session = await getSession();
 
 
 export const useProductStore = create<ProductState>()(
