@@ -156,6 +156,10 @@ export function ProductsTable({
 
     const handleMultipleDelete = async () => {
         if (selectedProducts.length === 0) return
+
+        const confirmed = confirm(`Are you sure you want to delete ${selectedProducts.length} products?`)
+        if (!confirmed) return
+
         try {
             await Promise.all(selectedProducts.map((id) => handleDelete(id, "", true)))
             toast.success(`Deleted ${selectedProducts.length} products`)
@@ -181,6 +185,11 @@ export function ProductsTable({
 
     const handleMultipleStatus = async (status: boolean) => {
         if (selectedProducts.length === 0) return
+
+        const action = status ? "activate" : "deactivate"
+        const confirmed = confirm(`Are you sure you want to ${action} ${selectedProducts.length} products?`)
+        if (!confirmed) return
+
         try {
             await Promise.all(selectedProducts.map((id) => handleChangeStatus(id, status, true)))
             toast.success(`Updated status of ${selectedProducts.length} products`)
@@ -193,7 +202,7 @@ export function ProductsTable({
     // --- Loading State ---
     if (isLoading) {
         return (
-            <div className="rounded-md border ">
+            <div className="rounded-md border">
                 <Table>
                     <TableHeader>
                         <TableRow>
@@ -453,18 +462,27 @@ export function ProductsTable({
                             {selectedProducts.length} product{selectedProducts.length > 1 ? "s" : ""} selected
                         </p>
                         <div className="flex items-center space-x-2">
-                            <Button variant="outline" size="sm">
-                                Export Selected
-                            </Button>
-                            <Button variant="outline" size="sm" onClick={() => handleMultipleStatus(true)}>
+                            <Button
+                                variant="outline"
+                                size="sm"
+                                onClick={() => handleMultipleStatus(true)}
+                            >
                                 <CheckCircle className="mr-2 h-4 w-4" />
                                 Activate Selected
                             </Button>
-                            <Button variant="outline" size="sm" onClick={() => handleMultipleStatus(false)}>
+                            <Button
+                                variant="outline"
+                                size="sm"
+                                onClick={() => handleMultipleStatus(false)}
+                            >
                                 <XCircle className="mr-2 h-4 w-4" />
                                 Deactivate Selected
                             </Button>
-                            <Button variant="destructive" size="sm" onClick={handleMultipleDelete}>
+                            <Button
+                                variant="destructive"
+                                size="sm"
+                                onClick={handleMultipleDelete}
+                            >
                                 Delete Selected
                             </Button>
                         </div>

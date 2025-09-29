@@ -1,3 +1,5 @@
+import { iTag } from "@/models/StoreAdmin/product.model";
+
 // types/product.types.ts
 export interface Size {
     id: string;
@@ -39,7 +41,7 @@ export interface ProductFormData {
         allow_backorder: boolean;
     };
     specifications: Record<string, string>;
-    tags: string[];
+    tags: iTag[];
     seo: {
         title: string;
         description: string;

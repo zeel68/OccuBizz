@@ -1,0 +1,109 @@
+user:
+	storeId:{type:String}
+	name{type:String}
+	email{type:String}
+	emailVerified{type:Boolean}
+	password{type:String}
+	profileUrl{type:String}
+	address{type:String}
+	role{type:String}//"customer", "admin"
+	emailVerificationOtp{type:String}
+	emailVerificationExpires{type:DateTime}
+	passwordResetOtp{type:String}
+	passwordResetExpires{type:DateTime}
+
+cart:
+	user{type:objectId}
+	items:[{{product{type:ObjectId}
+	name{type:String}
+	category{type:String}
+	price{type:Number}
+	rating{type:Number}
+	description{type:String}
+	tag{type:String}
+	image{type:String}
+	quantity{type:String}}]
+	totalprice{type:Number}
+	couponId{type:String}
+
+wishlist:
+	userId{type:objectId}
+	productId{type:objectId}
+	note{type:String}
+category:
+	name{type:String}
+	description{type:String}
+	imageUrl{type:String}
+	products[{type:ObjectId}]
+product:
+	name{type:String}
+	description{type:String}
+	price{type:Number}
+	brand{type:String}
+	size{type:String}
+	color{type:String}
+	width{type:Number}
+	height{type:Number}
+	discount{type:Number}
+	Stock{type:Number}
+	rating{type:Number}
+	tags[{type:String}]
+	images[{type:String}]
+	category{type:ObjectId}
+	tagId{type:String}
+	couponProduct[]
+payment:
+	orderId:{type:String}
+	order{type:objectId}
+	amunt{type:Number}
+	currency{type:String}
+	errorMessage{type:String}
+	method{type:String}//"card", "upi", "netbanking"
+	status{type:String}//"pending", "success", "failed"
+	transactionId{type:String}
+	brand{type:String}
+	paymentDate{type:String}
+order:
+	orderNumber{type:String}
+	storeId{type:String}
+	userId{type:objectId}
+	products[{product:{type:objectId},quantity{type:Number}]
+	status{type:String} //"pending", "processing", "shipped", "delivered", "cancelled"
+	shippingAddress{type:String}
+	subtotal{type:Decimal}
+	taxtotal{type:Decimal}
+	discountTotal{type:Decimal}
+	total{type:Decimal}
+orderItem:
+	orderId{type:String}
+	productId{type:String}
+	price{type:Decimal}
+	quantity{type:Number}
+	total{type:Decimal}
+	productImage{type:String}
+	variantColor{type:String}
+	variantSize{type:String}
+address:
+	userId{type:String}
+	firstName{type:String}
+	lastName{type:String}
+	company{type:String}
+	city{type:String}
+	state{type:String}
+	country{type:String}
+tag:
+	name{type:String}
+	type{type:String}// text, number, boolean, color, size
+	category{type:String}
+coupon:
+	storeId{type:String}
+	description{type:String}
+	type{type:coupontype}
+	value{type:Decimal}
+	percentage{type:Decimal}
+	minimumOrderAmount{type:Decimal}
+	maximumDiscountAmount{type:Decimal}
+	usageLimit{type:Number}
+	usageCount{type:Number}
+	usageLimitPerUser{type:Number}
+	couponUsages[]

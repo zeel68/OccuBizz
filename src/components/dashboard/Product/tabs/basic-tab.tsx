@@ -9,10 +9,11 @@ import { Alert, AlertDescription } from "@/components/ui/alert"
 import { Textarea } from "@/components/ui/textarea"
 import { Package, ImageIcon, Tag, Settings, X, Plus, AlertTriangle } from 'lucide-react'
 import { UseFormReturn } from "react-hook-form"
-import { ProductFormData, Specification } from "@/types/product.types"
+import { ProductFormData, Specification, } from "@/types/product.types"
 import ImageUpload from "@/components/shared/image-upload"
 import { RichTextEditor } from "@/components/ui/rich-text-editor"
 import { useState } from "react"
+import { iTag } from "@/models/StoreAdmin/product.model"
 
 interface BasicTabProps {
     form: UseFormReturn<ProductFormData>
@@ -21,8 +22,8 @@ interface BasicTabProps {
     setFormErrors: (errors: Record<string, string>) => void
     validateForm: () => boolean
     allCategories: any[]
-    tags: string[]
-    setTags: (tags: string[]) => void
+    tags: iTag[]
+    setTags: (tags: iTag[]) => void
     specifications: Specification[]
     setSpecifications: (specs: Specification[]) => void
     mainImages: (File | string)[]
@@ -45,7 +46,7 @@ export function BasicTab({
     mainPrimaryIndex,
     setMainPrimaryIndex
 }: BasicTabProps) {
-    const [newTag, setNewTag] = useState('')
+    const [newTag, setNewTag] = useState<iTag>({ name: '', value: '' })
     const [newSpecification, setNewSpecification] = useState<Specification>({ key: '', value: '' })
 
     const handleNumberChange = (field: keyof ProductFormData, value: string) => {
@@ -54,15 +55,21 @@ export function BasicTab({
     }
 
     const addTag = () => {
-        const trimmed = newTag.trim().toLowerCase()
-        if (trimmed && !tags.some(tag => tag.toLowerCase() === trimmed)) {
-            setTags([...tags, trimmed])
-            setNewTag('')
+        const trimmedName = newTag.name.trim()
+        const trimmedValue = newTag.value.trim()
+
+        if (trimmedName && trimmedValue) {
+            if (tags.some(tag => tag.name.toLowerCase() === trimmedName.toLowerCase())) {
+                alert(`Tag "${trimmedName}" already exists`)
+                return
+            }
+            setTags([...tags, { name: trimmedName, value: trimmedValue }])
+            setNewTag({ name: '', value: '' })
         }
     }
 
-    const removeTag = (tagToRemove: string) => {
-        setTags(tags.filter(tag => tag !== tagToRemove))
+    const removeTag = (index: number) => {
+        setTags(tags.filter((_, i) => i !== index))
     }
 
     const addSpecification = () => {
@@ -225,7 +232,6 @@ export function BasicTab({
                             disabled={loading}
                             showLocalPreview={true}
                             maxFiles={10}
-                        // accept="image/*"
                         />
                         <p className="text-sm text-muted-foreground mt-2">
                             Upload up to 10 images. First image will be used as primary.
@@ -242,45 +248,61 @@ export function BasicTab({
                     </CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-4">
-                    <div className="flex gap-2">
+                    <div className="grid grid-cols-2 gap-2">
                         <Input
-                            value={newTag}
-                            onChange={(e) => setNewTag(e.target.value)}
-                            placeholder="Add a tag"
+                            value={newTag.name}
+                            onChange={(e) => setNewTag((prev: any) => ({ ...prev, name: e.target.value }))}
+                            placeholder="Tag name"
+                            disabled={loading}
                             onKeyDown={(e) => {
                                 if (e.key === "Enter") {
                                     e.preventDefault()
                                     addTag()
                                 }
                             }}
-                            disabled={loading}
-                            className="flex-1"
                         />
-                        <Button
-                            type="button"
-                            onClick={addTag}
-                            variant="outline"
-                            disabled={loading || !newTag.trim()}
-                        >
-                            <Plus className="h-4 w-4" />
-                        </Button>
+                        <div className="flex gap-2">
+                            <Input
+                                value={newTag.value}
+                                onChange={(e) => setNewTag((prev: any) => ({ ...prev, value: e.target.value }))}
+                                placeholder="Tag value"
+                                disabled={loading}
+                                className="flex-1"
+                                onKeyDown={(e) => {
+                                    if (e.key === "Enter") {
+                                        e.preventDefault()
+                                        addTag()
+                                    }
+                                }}
+                            />
+                            <Button
+                                type="button"
+                                onClick={addTag}
+                                variant="outline"
+                                disabled={loading || !newTag.name.trim() || !newTag.value.trim()}
+                            >
+                                <Plus className="h-4 w-4" />
+                            </Button>
+                        </div>
                     </div>
                     {tags.length > 0 && (
-                        <div className="flex flex-wrap gap-2">
+                        <div className="space-y-2">
                             {tags.map((tag, index) => (
-                                <Badge key={index} variant="secondary" className="flex items-center gap-1 px-3 py-1">
-                                    {tag}
+                                <div key={index} className="flex items-center justify-between p-3 border rounded-md bg-muted/20">
+                                    <div className="flex items-center gap-3">
+                                        <span className="font-medium">{tag.name}:</span>
+                                        <span className="text-muted-foreground">{tag.value}</span>
+                                    </div>
                                     <Button
                                         type="button"
                                         variant="ghost"
                                         size="sm"
-                                        className="h-auto p-0 ml-2"
-                                        onClick={() => removeTag(tag)}
+                                        onClick={() => removeTag(index)}
                                         disabled={loading}
                                     >
-                                        <X className="h-3 w-3" />
+                                        <X className="h-4 w-4" />
                                     </Button>
-                                </Badge>
+                                </div>
                             ))}
                         </div>
                     )}

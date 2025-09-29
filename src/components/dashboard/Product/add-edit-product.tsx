@@ -29,6 +29,7 @@ import { ShippingTab } from "./tabs/shipping-tab"
 import { SEOTab } from "./tabs/seo-tab"
 import { AdvancedTab } from "./tabs/advance-tab"
 import { BasicTab } from "./tabs/basic-tab"
+import { iTag } from "@/models/StoreAdmin/product.model"
 
 // Utility functions
 const generateUUID = () => crypto.randomUUID()
@@ -69,7 +70,7 @@ export default function AddEditProductPage({ id }: AddEditProductPageProps) {
     const [formErrors, setFormErrors] = useState<Record<string, string>>({})
 
     // Shared states
-    const [tags, setTags] = useState<string[]>([])
+    const [tags, setTags] = useState<iTag[]>([])
     const [specifications, setSpecifications] = useState<Specification[]>([])
     const [seoKeywords, setSeoKeywords] = useState<string[]>([])
     const [mainImages, setMainImages] = useState<(File | string)[]>([])

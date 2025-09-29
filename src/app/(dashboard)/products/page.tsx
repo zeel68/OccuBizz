@@ -56,18 +56,18 @@ export default function ProductsPage() {
     // Load categories on mount
     useEffect(() => {
         if (allCategories.length === 0) {
-            fetchCategories()
+            // fetchCategories()
             fetchAllCategories();
         }
-        // fetchProductStats()
-    }, [categories.length, fetchCategories, fetchProductStats, fetchAllCategories])
+        fetchProductStats()
+    }, [fetchCategories, fetchProductStats, fetchAllCategories])
 
     // Debounced search effect
     useEffect(() => {
         const timeoutId = setTimeout(() => {
             if (filters.search !== appliedFilters.search) {
                 setAppliedFilters((prev) => ({ ...prev, search: filters.search }))
-                setCurrentPage(1) // Reset to first page when search changes
+                setCurrentPage(1)
             }
         }, 500)
 
@@ -117,6 +117,7 @@ export default function ProductsPage() {
         filters.date_to,
         filters.sort,
         filters.order,
+        appliedFilters
     ])
 
     // Fetch products when applied filters or pagination changes
@@ -182,7 +183,7 @@ export default function ProductsPage() {
     }
 
     const totalItems = productInfo?.pagination?.total ?? 0
-    const totalPages = productInfo?.pagination?.totalPages ?? 0
+    const totalPages = productInfo?.pagination?.totalPages ?? 1
     const hasNext = productInfo?.pagination?.hasNext ?? false
     const hasPrev = productInfo?.pagination?.hasPrev ?? false
 
@@ -192,10 +193,18 @@ export default function ProductsPage() {
         }
     }
 
+    const handleItemsPerPageChange = (value: string) => {
+        const newItemsPerPage = parseInt(value)
+        setItemsPerPage(newItemsPerPage)
+        setCurrentPage(1) // Reset to first page when items per page changes
+    }
+
     const getPaginationNumbers = () => {
         const delta = 2
         const range = []
         const rangeWithDots = []
+
+        if (totalPages <= 1) return [1]
 
         for (let i = Math.max(2, currentPage - delta); i <= Math.min(totalPages - 1, currentPage + delta); i++) {
             range.push(i)
@@ -278,7 +287,7 @@ export default function ProductsPage() {
             </div>
 
             {/* Stats Cards */}
-            {/* {stats && (
+            {stats && (
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                     <Card>
                         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
@@ -332,7 +341,7 @@ export default function ProductsPage() {
                         </CardContent>
                     </Card>
                 </div>
-            )} */}
+            )}
 
             <Card className="border-0 shadow-md">
                 <CardHeader>
@@ -508,6 +517,7 @@ export default function ProductsPage() {
                         categories={allCategories}
                     />
 
+                    {/* Pagination - Same style as Orders Table */}
                     {totalItems > 0 && (
                         <div className="flex flex-col sm:flex-row items-center justify-between mt-6 gap-4">
                             <div className="flex items-center space-x-2">
@@ -515,7 +525,7 @@ export default function ProductsPage() {
                                     Showing {(currentPage - 1) * itemsPerPage + 1}-{Math.min(currentPage * itemsPerPage, totalItems)} of{" "}
                                     {totalItems} products
                                 </p>
-                                <Select value={itemsPerPage.toString()} onValueChange={(value) => setItemsPerPage(Number(value))}>
+                                <Select value={itemsPerPage.toString()} onValueChange={handleItemsPerPageChange}>
                                     <SelectTrigger className="w-20">
                                         <SelectValue />
                                     </SelectTrigger>
@@ -530,20 +540,27 @@ export default function ProductsPage() {
                             </div>
 
                             {totalPages > 1 && (
-                                <div className="flex items-center space-x-2">
-                                    <Button variant="outline" size="sm" onClick={() => handlePageChange(1)} disabled={currentPage === 1}>
+                                <div className="flex items-center space-x-1">
+                                    <Button
+                                        variant="outline"
+                                        size="icon"
+                                        onClick={() => handlePageChange(1)}
+                                        disabled={currentPage === 1}
+                                        className="h-8 w-8"
+                                    >
                                         <ChevronsLeft className="h-4 w-4" />
                                     </Button>
                                     <Button
                                         variant="outline"
-                                        size="sm"
+                                        size="icon"
                                         onClick={() => handlePageChange(currentPage - 1)}
                                         disabled={!hasPrev}
+                                        className="h-8 w-8"
                                     >
                                         <ChevronLeft className="h-4 w-4" />
                                     </Button>
 
-                                    <div className="flex items-center space-x-1">
+                                    <div className="flex items-center space-x-1 mx-2">
                                         {getPaginationNumbers().map((pageNum, index) =>
                                             pageNum === "..." ? (
                                                 <span key={index} className="px-2 py-1 text-sm text-muted-foreground">
@@ -551,10 +568,11 @@ export default function ProductsPage() {
                                                 </span>
                                             ) : (
                                                 <Button
-                                                    key={pageNum}
+                                                    key={index}
                                                     variant={currentPage === pageNum ? "default" : "outline"}
                                                     size="sm"
                                                     onClick={() => handlePageChange(pageNum as number)}
+                                                    className={`h-8 w-8 ${currentPage === pageNum ? "bg-primary text-primary-foreground" : ""}`}
                                                 >
                                                     {pageNum}
                                                 </Button>
@@ -564,17 +582,19 @@ export default function ProductsPage() {
 
                                     <Button
                                         variant="outline"
-                                        size="sm"
+                                        size="icon"
                                         onClick={() => handlePageChange(currentPage + 1)}
                                         disabled={!hasNext}
+                                        className="h-8 w-8"
                                     >
                                         <ChevronRight className="h-4 w-4" />
                                     </Button>
                                     <Button
                                         variant="outline"
-                                        size="sm"
+                                        size="icon"
                                         onClick={() => handlePageChange(totalPages)}
                                         disabled={currentPage === totalPages}
+                                        className="h-8 w-8"
                                     >
                                         <ChevronsRight className="h-4 w-4" />
                                     </Button>

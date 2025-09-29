@@ -31,7 +31,7 @@ export interface iProduct {
     attributes: Record<string, any>
     specifications: Record<string, any>
     discount_price: number
-    tags: string[]
+    tags: iTag[]
     seo: {
         title: string
         description: string
@@ -76,6 +76,8 @@ export interface iProductStats {
     active_products: number
     low_stock_products: number
     out_of_stock_products: number
+    avg_rating: number
+    total_reviews: number
     total_value: number
     avg_price: number
 }
@@ -128,6 +130,11 @@ interface iVariantSize {
     priceModifier: number;
     sku: string;
     attributes: Record<string, any>;
+}
+
+export interface iTag {
+    name: string;
+    value: string;
 }
 
 export interface iProductVariant {
