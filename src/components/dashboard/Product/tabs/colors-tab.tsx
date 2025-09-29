@@ -706,7 +706,6 @@ export function ColorVariantsTab({
                                                             </div>
                                                         )}
                                                     </ScrollArea>
-
                                                     {/* Quick Add Custom Size */}
                                                     <div className="space-y-2">
                                                         <Label className="text-sm text-muted-foreground">Quick add custom size</Label>
@@ -718,7 +717,7 @@ export function ColorVariantsTab({
                                                                     const txt = (e.target as HTMLInputElement).value.trim()
                                                                     if (txt) {
                                                                         if (!sizeOptions.includes(txt)) {
-                                                                            setSizeOptions(prev => [...prev, txt])
+                                                                            setSizeOptions([...sizeOptions, txt]) // Direct value instead of function
                                                                         }
                                                                         toggleSizeSelection(variant.id, txt);
                                                                         (e.target as HTMLInputElement).value = ""

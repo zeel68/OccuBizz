@@ -21,7 +21,7 @@ export function ShippingTab({ form, loading }: ShippingTabProps) {
 
     const handleBlur = (field: string, value: string) => {
         const parsed = value === "" ? undefined : Number(value)
-        if (!isNaN(parsed)) {
+        if (!isNaN(parsed as any)) {
             form.setValue(field as any, parsed)
         }
     }
