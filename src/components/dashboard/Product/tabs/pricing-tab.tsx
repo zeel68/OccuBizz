@@ -108,7 +108,7 @@ export function PricingTab({ form, loading, formErrors }: PricingTabProps) {
                             <div>
                                 <p className="text-sm text-muted-foreground">Profit Amount</p>
                                 <p className={`text-lg font-semibold ${profitAmount >= 0 ? 'text-green-600' : 'text-red-600'}`}>
-                                    ${profitAmount.toFixed(2)}
+                                    ₹{profitAmount.toFixed(2)}
                                 </p>
                             </div>
                         </div>

@@ -840,7 +840,9 @@ export function ColorVariantsTab({
                                                 </TableCell>
                                                 <TableCell>
                                                     <div className="relative">
-                                                        <DollarSign className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                                                        <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-sm text-muted-foreground pointer-events-none">
+                                                            ₹
+                                                        </span>
                                                         <Input
                                                             className="h-9 text-sm pl-8"
                                                             type="number"
@@ -848,13 +850,15 @@ export function ColorVariantsTab({
                                                             value={size.priceModifier || ""}
                                                             onChange={(e) =>
                                                                 updateSizeInVariant(variant.id, size.id, {
-                                                                    priceModifier: e.target.value === "" ? undefined : parseFloat(e.target.value) || 0,
+                                                                    priceModifier:
+                                                                        e.target.value === "" ? undefined : parseFloat(e.target.value) || 0,
                                                                 })
                                                             }
                                                             placeholder="0.00"
                                                             disabled={loading}
                                                         />
                                                     </div>
+
                                                 </TableCell>
                                                 <TableCell>
                                                     <div className="font-semibold text-green-600 bg-green-50 px-2 py-1 rounded text-sm">
