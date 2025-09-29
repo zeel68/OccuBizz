@@ -1,4 +1,4 @@
-// tabs/ShippingTab.tsx
+import { useState } from "react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
@@ -13,9 +13,17 @@ interface ShippingTabProps {
 }
 
 export function ShippingTab({ form, loading }: ShippingTabProps) {
-    const handleNumberChange = (field: string, value: string) => {
-        const num = value === '' ? undefined : Number(value)
-        form.setValue(field as any, num)
+    // Local states to track raw string input
+    const [weightInput, setWeightInput] = useState<string>(form.watch("shipping.weight")?.toString() || "")
+    const [lengthInput, setLengthInput] = useState<string>(form.watch("shipping.dimensions.length")?.toString() || "")
+    const [widthInput, setWidthInput] = useState<string>(form.watch("shipping.dimensions.width")?.toString() || "")
+    const [heightInput, setHeightInput] = useState<string>(form.watch("shipping.dimensions.height")?.toString() || "")
+
+    const handleBlur = (field: string, value: string) => {
+        const parsed = value === "" ? undefined : Number(value)
+        if (!isNaN(parsed)) {
+            form.setValue(field as any, parsed)
+        }
     }
 
     const weight = form.watch("shipping.weight")
@@ -23,8 +31,8 @@ export function ShippingTab({ form, loading }: ShippingTabProps) {
     const width = form.watch("shipping.dimensions.width")
     const height = form.watch("shipping.dimensions.height")
 
-    const hasAllDimensions = length && width && height
-    const volume = hasAllDimensions ? (length * width * height) / 1000 : 0 // Convert to liters
+    const hasAllDimensions = length !== undefined && width !== undefined && height !== undefined
+    const volume = hasAllDimensions ? (length! * width! * height!) / 1000 : 0 // Liters
 
     return (
         <Card className="shadow-sm">
@@ -35,6 +43,8 @@ export function ShippingTab({ form, loading }: ShippingTabProps) {
                 </CardTitle>
             </CardHeader>
             <CardContent className="space-y-6">
+
+                {/* Weight */}
                 <div className="space-y-2">
                     <Label htmlFor="weight">Weight (kg)</Label>
                     <Input
@@ -42,8 +52,9 @@ export function ShippingTab({ form, loading }: ShippingTabProps) {
                         type="number"
                         step="0.01"
                         min="0"
-                        value={weight || ""}
-                        onChange={(e) => handleNumberChange("shipping.weight", e.target.value)}
+                        value={weightInput}
+                        onChange={(e) => setWeightInput(e.target.value)}
+                        onBlur={() => handleBlur("shipping.weight", weightInput)}
                         placeholder="0.00"
                         disabled={loading}
                     />
@@ -52,41 +63,50 @@ export function ShippingTab({ form, loading }: ShippingTabProps) {
                     </p>
                 </div>
 
+                {/* Dimensions */}
                 <div className="space-y-4">
                     <Label>Dimensions (cm)</Label>
                     <div className="grid grid-cols-3 gap-4">
+                        {/* Length */}
                         <div className="space-y-2">
                             <Label className="text-sm">Length</Label>
                             <Input
                                 type="number"
                                 step="0.01"
                                 min="0"
-                                value={length || ""}
-                                onChange={(e) => handleNumberChange("shipping.dimensions.length", e.target.value)}
+                                value={lengthInput}
+                                onChange={(e) => setLengthInput(e.target.value)}
+                                onBlur={() => handleBlur("shipping.dimensions.length", lengthInput)}
                                 placeholder="0.00"
                                 disabled={loading}
                             />
                         </div>
+
+                        {/* Width */}
                         <div className="space-y-2">
                             <Label className="text-sm">Width</Label>
                             <Input
                                 type="number"
                                 step="0.01"
                                 min="0"
-                                value={width || ""}
-                                onChange={(e) => handleNumberChange("shipping.dimensions.width", e.target.value)}
+                                value={widthInput}
+                                onChange={(e) => setWidthInput(e.target.value)}
+                                onBlur={() => handleBlur("shipping.dimensions.width", widthInput)}
                                 placeholder="0.00"
                                 disabled={loading}
                             />
                         </div>
+
+                        {/* Height */}
                         <div className="space-y-2">
                             <Label className="text-sm">Height</Label>
                             <Input
                                 type="number"
                                 step="0.01"
                                 min="0"
-                                value={height || ""}
-                                onChange={(e) => handleNumberChange("shipping.dimensions.height", e.target.value)}
+                                value={heightInput}
+                                onChange={(e) => setHeightInput(e.target.value)}
+                                onBlur={() => handleBlur("shipping.dimensions.height", heightInput)}
                                 placeholder="0.00"
                                 disabled={loading}
                             />
@@ -97,6 +117,7 @@ export function ShippingTab({ form, loading }: ShippingTabProps) {
                     </p>
                 </div>
 
+                {/* Display Calculations */}
                 {(weight || hasAllDimensions) && (
                     <div className="p-4 bg-muted rounded-lg shadow-inner">
                         <Label className="text-sm font-medium">Package Info</Label>

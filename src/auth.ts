@@ -162,7 +162,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       // Expired → refresh it
       console.log("Expired Token");
 
-      return await refreshToken(token);
+      // return await refreshToken(token);
     },
 
     async session({ session, token }) {

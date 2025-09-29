@@ -1,5 +1,5 @@
 // tabs/ColorVariantsTab.tsx
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
@@ -24,7 +24,8 @@ import {
     ChevronDown,
     ChevronUp,
     Settings2,
-    Sparkles
+    Sparkles,
+    CheckSquare
 } from 'lucide-react'
 import { UseFormReturn } from "react-hook-form"
 import { ProductFormData, ProductVariant, CategoryFilter, Size } from "@/types/product.types"
@@ -58,6 +59,26 @@ export function ColorVariantsTab({
 
     const generateUUID = () => crypto.randomUUID()
     const basePrice = form.watch("price") || 0
+
+    // Extract all unique sizes from variants to ensure they appear in global options when editing
+    useEffect(() => {
+        if (colorVariants.length > 0) {
+            const variantSizes = new Set<string>()
+            colorVariants.forEach(variant => {
+                variant.sizes.forEach((size: any) => {
+                    if (size.size) {
+                        variantSizes.add(size.size)
+                    }
+                })
+            })
+
+            // Merge existing sizeOptions with sizes found in variants
+            const allSizes = new Set([...sizeOptions, ...Array.from(variantSizes)])
+            if (allSizes.size > sizeOptions.length) {
+                setSizeOptions(Array.from(allSizes))
+            }
+        }
+    }, [colorVariants]) // Only run when colorVariants change
 
     const toggleVariantExpansion = (variantId: string) => {
         setExpandedVariants(prev => ({
@@ -95,6 +116,48 @@ export function ColorVariantsTab({
         ))
     }
 
+    const selectAllSizes = (variantId: string) => {
+        setColorVariants(colorVariants.map(variant => {
+            if (variant.id !== variantId) return variant
+
+            // Get all available size options (global + any custom sizes already in this variant)
+            const availableSizes = Array.from(new Set([
+                ...sizeOptions,
+                ...variant.sizes.map((s: any) => s.size)
+            ]))
+
+            // Create new sizes array with all available sizes
+            const newSizes = availableSizes.map(sizeLabel => {
+                const existingSize = variant.sizes.find((s: any) => s.size === sizeLabel)
+                if (existingSize) {
+                    return existingSize
+                } else {
+                    return {
+                        id: generateUUID(),
+                        size: sizeLabel,
+                        stock: 0,
+                        priceModifier: 0,
+                        sku: "",
+                        attributes: {}
+                    }
+                }
+            })
+
+            return {
+                ...variant,
+                sizes: newSizes
+            }
+        }))
+        toast.success("All sizes selected for this variant")
+    }
+
+    const deselectAllSizes = (variantId: string) => {
+        setColorVariants(colorVariants.map(variant =>
+            variant.id === variantId ? { ...variant, sizes: [] } : variant
+        ))
+        toast.success("All sizes deselected for this variant")
+    }
+
     const toggleSizeSelection = (variantId: string, sizeLabel: string) => {
         setColorVariants(colorVariants.map(variant => {
             if (variant.id !== variantId) return variant
@@ -124,13 +187,33 @@ export function ColorVariantsTab({
 
     const addNewSizeOption = () => {
         const label = newSizeOption.trim()
-        if (!label || sizeOptions.includes(label)) {
-            toast.error("Size option already exists or is empty")
+        if (!label) {
+            toast.error("Size option cannot be empty")
+            return
+        }
+        if (sizeOptions.includes(label)) {
+            toast.error("Size option already exists")
             return
         }
         setSizeOptions([...sizeOptions, label])
         setNewSizeOption("")
         toast.success(`Size "${label}" added to global options`)
+    }
+
+    const removeSizeOption = (sizeToRemove: string) => {
+        if (!confirm(`Remove "${sizeToRemove}" from global size options? This will also remove it from all variants.`)) return
+
+        // Remove from global options
+        const newSizeOptions = sizeOptions.filter(opt => opt !== sizeToRemove)
+        setSizeOptions(newSizeOptions)
+
+        // Remove from all variants
+        setColorVariants(colorVariants.map(variant => ({
+            ...variant,
+            sizes: variant.sizes.filter((s: any) => s.size !== sizeToRemove)
+        })))
+
+        toast.success(`Size "${sizeToRemove}" removed`)
     }
 
     const removeSizeFromVariant = (variantId: string, sizeId: string) => {
@@ -311,22 +394,33 @@ export function ColorVariantsTab({
 
     return (
         <div className="space-y-6">
-
-
             {/* Global Size Management */}
             <Card className="shadow-sm">
                 <CardHeader className="pb-4">
-                    <div className="flex items-center gap-2">
-                        <Package className="h-5 w-5 text-muted-foreground" />
-                        <CardTitle className="text-lg">Global Size Options</CardTitle>
+                    <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-2">
+                            <Package className="h-5 w-5 text-muted-foreground" />
+                            <CardTitle className="text-lg">Global Size Options</CardTitle>
+                        </div>
+                        <Badge variant="secondary" className="text-sm">
+                            {sizeOptions.length} sizes
+                        </Badge>
                     </div>
                 </CardHeader>
                 <CardContent>
                     <div className="space-y-4">
                         <div className="flex flex-wrap gap-2">
                             {sizeOptions.map(opt => (
-                                <Badge key={opt} variant="outline" className="px-3 py-1 text-sm">
+                                <Badge key={opt} variant="outline" className="px-3 py-1 text-sm flex items-center gap-1">
                                     {opt}
+                                    <button
+                                        type="button"
+                                        onClick={() => removeSizeOption(opt)}
+                                        className="text-muted-foreground hover:text-red-600 transition-colors"
+                                        disabled={loading}
+                                    >
+                                        <Trash2 className="h-3 w-3" />
+                                    </button>
                                 </Badge>
                             ))}
                             {sizeOptions.length === 0 && (
@@ -425,6 +519,8 @@ export function ColorVariantsTab({
                     colorVariants.map((variant, index) => {
                         const isExpanded = expandedVariants[variant.id] ?? true
                         const hasErrors = Object.keys(formErrors).some(key => key.startsWith(variant.id))
+                        const allSizesSelected = variant.sizes.length > 0 &&
+                            variant.sizes.length === Array.from(new Set([...sizeOptions, ...variant.sizes.map((s: any) => s.size)])).length
 
                         return (
                             <Card
@@ -549,14 +645,40 @@ export function ColorVariantsTab({
                                                             <Package className="h-5 w-5" />
                                                             Available Sizes
                                                         </Label>
-                                                        <Badge variant="secondary">
-                                                            {variant.sizes.length} selected
-                                                        </Badge>
+                                                        <div className="flex items-center gap-2">
+                                                            <Badge variant="secondary">
+                                                                {variant.sizes.length} selected
+                                                            </Badge>
+                                                            {allSizesSelected ? (
+                                                                <Button
+                                                                    type="button"
+                                                                    variant="outline"
+                                                                    size="sm"
+                                                                    onClick={() => deselectAllSizes(variant.id)}
+                                                                    disabled={loading}
+                                                                    className="h-8 text-xs"
+                                                                >
+                                                                    Deselect All
+                                                                </Button>
+                                                            ) : (
+                                                                <Button
+                                                                    type="button"
+                                                                    variant="outline"
+                                                                    size="sm"
+                                                                    onClick={() => selectAllSizes(variant.id)}
+                                                                    disabled={loading || sizeOptions.length === 0}
+                                                                    className="h-8 text-xs"
+                                                                >
+                                                                    <CheckSquare className="h-3 w-3 mr-1" />
+                                                                    Select All
+                                                                </Button>
+                                                            )}
+                                                        </div>
                                                     </div>
 
                                                     <ScrollArea className="h-64 border rounded-lg p-3">
                                                         <div className="grid grid-cols-2 gap-2">
-                                                            {sizeOptions.map(opt => {
+                                                            {Array.from(new Set([...sizeOptions, ...variant.sizes.map((s: any) => s.size)])).map(opt => {
                                                                 const checked = !!variant.sizes.find((s: any) => s.size === opt)
                                                                 return (
                                                                     <label
@@ -586,7 +708,6 @@ export function ColorVariantsTab({
                                                     </ScrollArea>
 
                                                     {/* Quick Add Custom Size */}
-                                                    {/* Quick Add Custom Size */}
                                                     <div className="space-y-2">
                                                         <Label className="text-sm text-muted-foreground">Quick add custom size</Label>
                                                         <Input
@@ -597,7 +718,7 @@ export function ColorVariantsTab({
                                                                     const txt = (e.target as HTMLInputElement).value.trim()
                                                                     if (txt) {
                                                                         if (!sizeOptions.includes(txt)) {
-                                                                            setSizeOptions([...sizeOptions, txt]) // Direct value instead of function
+                                                                            setSizeOptions(prev => [...prev, txt])
                                                                         }
                                                                         toggleSizeSelection(variant.id, txt);
                                                                         (e.target as HTMLInputElement).value = ""
@@ -738,7 +859,7 @@ export function ColorVariantsTab({
                                                 </TableCell>
                                                 <TableCell>
                                                     <div className="font-semibold text-green-600 bg-green-50 px-2 py-1 rounded text-sm">
-                                                        ${(
+                                                        ₹{(
                                                             basePrice +
                                                             (size.priceModifier || 0)
                                                         ).toFixed(2)}
@@ -801,8 +922,6 @@ export function ColorVariantsTab({
                     </CardContent>
                 </Card>
             )}
-
-
         </div>
     )
 }

@@ -19,6 +19,7 @@ export function PricingTab({ form, loading, formErrors }: PricingTabProps) {
     }
 
     const price = form.watch("price") || 0
+    const compare_price = form.watch("compare_price") || 0
     const costPrice = form.watch("cost_price") || 0
 
     const profitMargin = price > 0 ? ((price - costPrice) / price) * 100 : 0
