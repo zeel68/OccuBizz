@@ -71,7 +71,6 @@ export const useAnalyticsStore = create<iAnalyticsState>()(
                 try {
                     const response = await apiClient.get("/store-admin/dashboard") as ApiResponse<any>
                     const data = response;
-                    console.log(response);
 
                     if (response.success) {
                         set({ dashboardData: response.data.data })
@@ -127,13 +126,16 @@ export const useAnalyticsStore = create<iAnalyticsState>()(
                 set({ loading: true, error: null })
                 try {
                     const queryParams = new URLSearchParams(params as Record<string, string>)
-                    const response = await apiClient.get(`/store-admin/analytics/customers?${queryParams}`) as ApiResponse<any>
+                    // http://backend.dhaneri.com/api/store-admin/analytics/customers
+                    const response = await apiClient.get(`/store-admin/analytics/customers`) as ApiResponse<any>
                     const data = response
 
                     if (data.success) {
                         set({ customerAnalytics: data.data.data })
                     } else {
-                        set({ error: data.error || "Failed to fetch customer analytics" })
+                        console.log(response);
+
+                        // set({ error: data.error || "Failed to fetch customer analytics" })
                     }
                 } catch (error) {
                     set({ error: "Network error occurred" })

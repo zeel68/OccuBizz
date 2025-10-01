@@ -88,7 +88,11 @@ const navigation = [
     icon: BarChart3,
     badge: "New",
     children: [
-      { name: "All Analytics", href: "/analytics" },
+      { name: "Customer Analytics", href: "/CustomerAnalytics" },
+      { name: "Product Performance", href: "/ProductPerformance" },
+      { name: "RealTime", href: "/RealTime" },
+      { name: "Funnel", href: "/Funnel" },
+      { name: "Geographic", href: "/Geographic" },
 
     ],
   },
@@ -231,7 +235,7 @@ export function StoreAdminSidebar() {
                   <CollapsibleContent className="overflow-hidden transition-all duration-300">
                     <SidebarMenuSub className="mt-1 ml-1 space-y-1 border-l border-gray-200 dark:border-gray-700 pl-3 py-1">
                       {item.children.map((child) => (
-                        <SidebarMenuSubItem key={child.name}>
+                        <SidebarMenuSubItem key={child.href}>
                           <SidebarMenuSubButton
                             asChild
                             className={cn(
