@@ -88,19 +88,20 @@ export const LoginForm = () => {
               description: "You have been logged in successfully.",
             });
             // Redirect based on role with a small delay to show success message
-            setTimeout(() => {
-              switch (role) {
-                case ADMIN_ROLE_ID:
-                  router.push("/Admin");
-                  break;
-                case OWNER_ROLE_ID:
-                  router.push("/");
-                  break;
-                default:
-                  router.push("/");
-                  break;
-              }
-            }, 1000);
+            // setTimeout(() => {
+            //   switch (role) {
+            //     case ADMIN_ROLE_ID:
+            //       router.push("/Admin");
+            //       break;
+            //     case OWNER_ROLE_ID:
+            //       router.push("/");
+            //       break;
+            //     default:
+            //       router.push("/");
+            //       break;
+            //   }
+            // }, 1000);
+            router.push("/")
           } else {
             setError("Failed to retrieve user session.");
             toast.error("Session error", {

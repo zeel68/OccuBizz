@@ -54,6 +54,8 @@ import {
 } from "../ui/collapsible";
 import { cn } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
+import { ADMIN_ROLE_ID } from "@/data/Consts";
+import { is } from "date-fns/locale";
 
 const navigation = [
   {
@@ -107,6 +109,7 @@ const navigation = [
     href: "/reviews",
     icon: Star,
   },
+
   // {
   //   name: "Reports",
   //   href: "/reports",
@@ -130,6 +133,33 @@ const navigation = [
   },
 ];
 
+const superAdminNavigation = [
+  {
+    name: "Stores",
+    href: "/stores",
+    icon: ShoppingCart,
+  },
+  {
+    name: "Global Categories",
+    href: "/global-categories",
+    icon: Tag,
+  },
+  {
+    name: "System Analytics",
+    href: "/SystemAnalytics",
+    icon: BarChart3,
+    // badge: "New",
+    children: [
+      { name: "Customer Analytics", href: "/CustomerAnalytics" },
+      { name: "Product Performance", href: "/ProductPerformance" },
+      { name: "RealTime", href: "/RealTime" },
+      { name: "Funnel", href: "/Funnel" },
+      { name: "Geographic", href: "/Geographic" },
+
+    ],
+  },
+];
+
 export function StoreAdminSidebar() {
   const pathname = usePathname();
   const { data: session } = useSession();
@@ -147,6 +177,7 @@ export function StoreAdminSidebar() {
   };
 
   useEffect(() => {
+
     const parentsToOpen = navigation
       .filter((item) =>
         item.children?.some(
@@ -155,7 +186,8 @@ export function StoreAdminSidebar() {
       )
       .map((item) => item.name);
     setOpenItems(parentsToOpen);
-  }, [pathname]);
+
+  }, [pathname, session]);
 
   const toggleItem = (name: string) => {
     setOpenItems((prev) =>
@@ -190,6 +222,110 @@ export function StoreAdminSidebar() {
 
       <SidebarContent className="p-3">
         <SidebarMenu className="space-y-1">
+          {session?.user.role === ADMIN_ROLE_ID && superAdminNavigation.map((item) => (
+            <>
+              <SidebarMenuItem key={item.href}>
+                {item.children ? (
+                  <Collapsible
+                    open={openItems.includes(item.name)}
+                    onOpenChange={() => toggleItem(item.name)}
+                  >
+                    <CollapsibleTrigger asChild>
+                      <SidebarMenuButton
+                        className={cn(
+                          "w-full justify-between px-3 py-2.5 text-sm font-medium rounded-lg transition-all",
+                          "group hover:bg-gray-50 dark:hover:bg-gray-800",
+                          isParentActive(item.href, item.children)
+                            ? "bg-blue-50 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300"
+                            : "text-gray-700 dark:text-gray-300"
+                        )}
+                      >
+                        <div className="flex items-center space-x-3">
+                          <div className={cn(
+                            "p-1.5 rounded-lg transition-colors",
+                            isParentActive(item.href, item.children)
+                              ? "bg-blue-100 text-blue-600 dark:bg-blue-800/50"
+                              : "bg-gray-100 text-gray-600 dark:bg-gray-800 dark:text-gray-400"
+                          )}>
+                            <item.icon className="w-4 h-4" />
+                          </div>
+                          <span className="truncate">{item.name}</span>
+                          {item.badge && (
+                            <Badge className="ml-2 text-xs px-1.5 py-0.5">
+                              {item.badge}
+                            </Badge>
+                          )}
+                        </div>
+                        <ChevronDown
+                          className={cn(
+                            "w-4 h-4 transition-transform text-gray-400 group-hover:text-gray-600",
+                            "dark:text-gray-500 dark:group-hover:text-gray-300",
+                            openItems.includes(item.name) && "rotate-180"
+                          )}
+                        />
+                      </SidebarMenuButton>
+                    </CollapsibleTrigger>
+                    <CollapsibleContent className="overflow-hidden transition-all duration-300">
+                      <SidebarMenuSub className="mt-1 ml-1 space-y-1 border-l border-gray-200 dark:border-gray-700 pl-3 py-1">
+                        {item.children.map((child) => (
+                          <SidebarMenuSubItem key={child.href}>
+                            <SidebarMenuSubButton
+                              asChild
+                              className={cn(
+                                "w-full px-3 py-2 text-sm rounded-lg transition-colors",
+                                "group hover:bg-gray-50 dark:hover:bg-gray-800",
+                                isActive(child.href)
+                                  ? "bg-blue-50 text-blue-700 font-medium dark:bg-blue-900/30 dark:text-blue-300"
+                                  : "text-gray-600 dark:text-gray-400"
+                              )}
+                            >
+                              <Link href={child.href} className="flex items-center">
+                                <div className={cn(
+                                  "w-1.5 h-1.5 rounded-full mr-3 transition-colors",
+                                  isActive(child.href)
+                                    ? "bg-blue-500"
+                                    : "bg-gray-300 group-hover:bg-gray-500 dark:bg-gray-600"
+                                )} />
+                                <span className="truncate">{child.name}</span>
+                              </Link>
+                            </SidebarMenuSubButton>
+                          </SidebarMenuSubItem>
+                        ))}
+                      </SidebarMenuSub>
+                    </CollapsibleContent>
+                  </Collapsible>
+                ) : (
+                  <SidebarMenuButton
+                    asChild
+                    className={cn(
+                      "w-full px-3 py-2.5 text-sm font-medium rounded-lg transition-colors",
+                      "group hover:bg-gray-50 dark:hover:bg-gray-800",
+                      isActive(item.href)
+                        ? "bg-blue-50 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300"
+                        : "text-gray-700 dark:text-gray-300"
+                    )}
+                  >
+                    <Link href={item.href} className="flex items-center space-x-3">
+                      <div className={cn(
+                        "p-1.5 rounded-lg transition-colors",
+                        isActive(item.href)
+                          ? "bg-blue-100 text-blue-600 dark:bg-blue-800/50"
+                          : "bg-gray-100 text-gray-600 dark:bg-gray-800 dark:text-gray-400"
+                      )}>
+                        <item.icon className="w-4 h-4" />
+                      </div>
+                      <span className="truncate">{item.name}</span>
+                      {item.badge && (
+                        <Badge variant={'default'} className="ml-auto text-xs px-1.5 py-0.5">
+                          {item}
+                        </Badge>
+                      )}
+                    </Link>
+                  </SidebarMenuButton>
+                )}
+              </SidebarMenuItem>
+            </>
+          ))}
           {navigation.map((item) => (
             <SidebarMenuItem key={item.name}>
               {item.children ? (
