@@ -528,13 +528,13 @@ export default function CategoriesPage() {
           return b.name.localeCompare(a.name);
         case "created-asc":
           return (
-            new Date(a.created_at || 0).getTime() -
-            new Date(b.created_at || 0).getTime()
+            new Date(a.createdAt || 0).getTime() -
+            new Date(b.createdAt || 0).getTime()
           );
         case "created-desc":
           return (
-            new Date(b.created_at || 0).getTime() -
-            new Date(a.created_at || 0).getTime()
+            new Date(b.createdAt || 0).getTime() -
+            new Date(a.createdAt || 0).getTime()
           );
         default: // name-asc
           return a.name.localeCompare(b.name);
@@ -849,7 +849,7 @@ export default function CategoriesPage() {
           </div>
 
           <CategoriesTable
-            categories={filteredAndSortedCategories}
+            categories={filteredAndSortedCategories as any}
             isLoading={loading}
             onEdit={handleEditCategory}
             onViewStores={handleViewStores}

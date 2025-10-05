@@ -1,10 +1,19 @@
-import AddEditCategoryPage from '@/components/super-admin/globalCategory/add-edit-page'
+// import AddEditCategoryPage from '@/components/super-admin/globalCategory/add-edit-page'
+// import React from 'react'
+
+// export default function page() {
+//   return (
+//     <div>
+//       <AddEditCategoryPage categoryId='' />
+//     </div >
+//   )
+// }
+
+
 import React from 'react'
 
 export default function page() {
   return (
-    <div>
-      <AddEditCategoryPage categoryId='' />
-    </div >
+    <div>page</div>
   )
 }

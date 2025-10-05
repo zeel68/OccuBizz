@@ -25,6 +25,8 @@ export interface iGlobalCategory {
   config: iConfig;
   tags: iTags[]
   status: boolean;
+  store_count: number;
+  is_active: boolean;
   createdAt: string;
   updatedAt: string;
 }

@@ -250,11 +250,7 @@ export function StoreAdminSidebar() {
                             <item.icon className="w-4 h-4" />
                           </div>
                           <span className="truncate">{item.name}</span>
-                          {item.badge && (
-                            <Badge className="ml-2 text-xs px-1.5 py-0.5">
-                              {item.badge}
-                            </Badge>
-                          )}
+
                         </div>
                         <ChevronDown
                           className={cn(
@@ -315,11 +311,6 @@ export function StoreAdminSidebar() {
                         <item.icon className="w-4 h-4" />
                       </div>
                       <span className="truncate">{item.name}</span>
-                      {item.badge && (
-                        <Badge variant={'default'} className="ml-auto text-xs px-1.5 py-0.5">
-                          {item}
-                        </Badge>
-                      )}
                     </Link>
                   </SidebarMenuButton>
                 )}
