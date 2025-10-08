@@ -206,14 +206,14 @@ export function TrendingProductsManager() {
     }
 
     return (
-        <div className="space-y-6">
+        <div className="space-y-4">
             <div className="flex items-center justify-between">
                 <div>
-                    <h3 className="text-xl font-semibold flex items-center gap-2">
-                        <TrendingUp className="h-5 w-5" />
+                    <h3 className="text-lg font-semibold flex items-center gap-2">
+                        <TrendingUp className="h-4 w-4" />
                         Trending Products
                     </h3>
-                    <p className="text-sm text-muted-foreground mt-1">
+                    <p className="text-sm text-muted-foreground">
                         Manage products featured in your trending section
                     </p>
                 </div>
@@ -225,7 +225,7 @@ export function TrendingProductsManager() {
                         disabled={trendingProducts.length === 0}
                     >
                         {previewMode ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-                        {previewMode ? "Exit Preview" : "Preview Mode"}
+                        {previewMode ? "Exit Preview" : "Preview"}
                     </Button>
                     <Button
                         onClick={() => handleOpenDialog()}
@@ -233,17 +233,17 @@ export function TrendingProductsManager() {
                         disabled={availableProducts.length === 0}
                     >
                         <Plus className="h-4 w-4" />
-                        Add Trending Product
+                        Add Product
                     </Button>
                 </div>
             </div>
 
             {availableProducts.length === 0 && trendingProducts.length === 0 && (
                 <Card className="border-dashed">
-                    <CardContent className="flex flex-col items-center justify-center py-16">
-                        <Package className="h-16 w-16 text-muted-foreground mb-4" />
-                        <h4 className="text-lg font-medium mb-2">No products available</h4>
-                        <p className="text-muted-foreground text-center max-w-md mb-6">
+                    <CardContent className="flex flex-col items-center justify-center py-12">
+                        <Package className="h-12 w-12 text-muted-foreground mb-3" />
+                        <h4 className="text-base font-medium mb-1">No products available</h4>
+                        <p className="text-muted-foreground text-center text-sm max-w-md">
                             Create products first to feature them as trending items on your homepage.
                         </p>
                     </CardContent>
@@ -252,14 +252,14 @@ export function TrendingProductsManager() {
 
             {trendingProducts.length === 0 && availableProducts.length > 0 && (
                 <Card className="border-dashed">
-                    <CardContent className="flex flex-col items-center justify-center py-16">
-                        <Star className="h-16 w-16 text-muted-foreground mb-4" />
-                        <h4 className="text-lg font-medium mb-2">No trending products set</h4>
-                        <p className="text-muted-foreground text-center max-w-md mb-6">
+                    <CardContent className="flex flex-col items-center justify-center py-12">
+                        <Star className="h-12 w-12 text-muted-foreground mb-3" />
+                        <h4 className="text-base font-medium mb-1">No trending products set</h4>
+                        <p className="text-muted-foreground text-center text-sm max-w-md mb-4">
                             Add products to feature them in the trending section of your homepage.
                         </p>
-                        <Button onClick={() => handleOpenDialog()} size="lg">
-                            <Plus className="h-5 w-5 mr-2" />
+                        <Button onClick={() => handleOpenDialog()}>
+                            <Plus className="h-4 w-4 mr-2" />
                             Add Trending Product
                         </Button>
                     </CardContent>
@@ -269,23 +269,23 @@ export function TrendingProductsManager() {
             {trendingProducts.length > 0 && (
                 <>
                     {previewMode ? (
-                        <div className="bg-gradient-to-br from-slate-50 to-slate-100 rounded-xl p-8 shadow-xl">
+                        <div className="bg-secondary rounded-lg p-6">
                             <div className="max-w-6xl mx-auto">
-                                <div className="text-center mb-8">
-                                    <div className="inline-flex items-center gap-2 bg-gradient-to-r from-purple-600 to-pink-600 text-white px-4 py-2 rounded-full text-sm font-medium mb-4">
-                                        <Sparkles className="h-4 w-4" />
+                                <div className="text-center mb-6">
+                                    <div className="inline-flex items-center gap-2 bg-primary text-primary-foreground px-3 py-1 rounded-full text-sm font-medium mb-3">
+                                        <Sparkles className="h-3 w-3" />
                                         Trending Now
                                     </div>
-                                    <h2 className="text-4xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent mb-2">
+                                    <h2 className="text-2xl font-bold text-foreground mb-2">
                                         Hot Picks This Week
                                     </h2>
-                                    <p className="text-slate-600 max-w-2xl mx-auto">
+                                    <p className="text-muted-foreground text-sm">
                                         Discover our most popular products that customers are loving right now
                                     </p>
                                 </div>
 
                                 <div className="relative">
-                                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
                                         {trendingProducts
                                             .sort((a, b) => a.display_order - b.display_order)
                                             .map((trendingProduct, index) => {
@@ -296,39 +296,38 @@ export function TrendingProductsManager() {
                                                     <div
                                                         key={trendingProduct._id}
                                                         className={cn(
-                                                            "relative group transition-all duration-500",
+                                                            "relative group transition-all duration-300",
                                                             isActive ? "scale-105 z-10" : "scale-95 opacity-70"
                                                         )}
                                                     >
-                                                        <Card className="overflow-hidden border-0 shadow-lg hover:shadow-2xl transition-all duration-300">
+                                                        <Card className="overflow-hidden">
                                                             <div className="relative">
-                                                                <div className="aspect-square overflow-hidden bg-gradient-to-br from-slate-100 to-slate-200">
+                                                                <div className="aspect-square overflow-hidden bg-muted">
                                                                     <img
                                                                         src={productInfo.images?.[0] || "/placeholder.svg"}
                                                                         alt={productInfo?.name || "Product"}
-                                                                        className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                                                                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                                                                     />
                                                                 </div>
                                                                 {isActive && (
-                                                                    <div className="absolute top-3 left-3">
-                                                                        <Badge className="bg-gradient-to-r from-purple-600 to-pink-600 text-white border-0">
+                                                                    <div className="absolute top-2 left-2">
+                                                                        <Badge className="bg-primary text-primary-foreground">
                                                                             #{trendingProduct.display_order}
                                                                         </Badge>
                                                                     </div>
                                                                 )}
-                                                                <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
                                                             </div>
-                                                            <CardContent className="p-4 bg-white">
-                                                                <h4 className="font-semibold text-lg mb-2 line-clamp-2">
+                                                            <CardContent className="p-3">
+                                                                <h4 className="font-medium text-sm mb-1 line-clamp-2">
                                                                     {productInfo?.name || "Unknown Product"}
                                                                 </h4>
-                                                                <div className="flex items-center justify-between mb-3">
-                                                                    <div className="flex items-center gap-2">
-                                                                        <span className="text-2xl font-bold text-slate-900">
+                                                                <div className="flex items-center justify-between mb-2">
+                                                                    <div className="flex items-center gap-1">
+                                                                        <span className="text-base font-bold text-foreground">
                                                                             ${productInfo?.price || 0}
                                                                         </span>
                                                                         {productInfo?.original_price && (
-                                                                            <span className="text-sm text-slate-500 line-through">
+                                                                            <span className="text-xs text-muted-foreground line-through">
                                                                                 ${productInfo.original_price}
                                                                             </span>
                                                                         )}
@@ -341,23 +340,14 @@ export function TrendingProductsManager() {
                                                                     </Badge>
                                                                 </div>
                                                                 <Button
-                                                                    className="w-full bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white border-0"
+                                                                    className="w-full"
                                                                     size="sm"
                                                                 >
-                                                                    <ShoppingCart className="h-4 w-4 mr-2" />
+                                                                    <ShoppingCart className="h-3 w-3 mr-1" />
                                                                     View Product
                                                                 </Button>
                                                             </CardContent>
                                                         </Card>
-
-                                                        {isActive && (
-                                                            <div className="absolute -bottom-2 left-1/2 -translate-x-1/2">
-                                                                <div className="bg-gradient-to-r from-purple-600 to-pink-600 text-white px-3 py-1 rounded-full text-xs font-medium flex items-center gap-1">
-                                                                    <ArrowRight className="h-3 w-3" />
-                                                                    Featured
-                                                                </div>
-                                                            </div>
-                                                        )}
                                                     </div>
                                                 )
                                             })}
@@ -366,35 +356,35 @@ export function TrendingProductsManager() {
                                     {trendingProducts.length > 1 && (
                                         <>
                                             <Button
-                                                variant="outline"
+                                                variant="secondary"
                                                 size="icon"
-                                                className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-1/2 bg-white/90 backdrop-blur-sm shadow-lg hover:bg-white transition-all duration-200"
+                                                className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-1/2 bg-background/80 backdrop-blur-sm shadow-sm hover:bg-background"
                                                 onClick={handlePrevPreview}
                                             >
-                                                <ChevronLeft className="h-5 w-5" />
+                                                <ChevronLeft className="h-4 w-4" />
                                             </Button>
 
                                             <Button
-                                                variant="outline"
+                                                variant="secondary"
                                                 size="icon"
-                                                className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-1/2 bg-white/90 backdrop-blur-sm shadow-lg hover:bg-white transition-all duration-200"
+                                                className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-1/2 bg-background/80 backdrop-blur-sm shadow-sm hover:bg-background"
                                                 onClick={handleNextPreview}
                                             >
-                                                <ChevronRight className="h-5 w-5" />
+                                                <ChevronRight className="h-4 w-4" />
                                             </Button>
                                         </>
                                     )}
                                 </div>
 
-                                <div className="flex justify-center gap-2 mt-8">
+                                <div className="flex justify-center gap-1 mt-4">
                                     {trendingProducts.map((_, index) => (
                                         <button
                                             key={index}
                                             className={cn(
-                                                "h-2 rounded-full transition-all duration-300",
+                                                "h-1.5 rounded-full transition-all duration-300",
                                                 index === currentPreviewIndex
-                                                    ? "w-8 bg-gradient-to-r from-purple-600 to-pink-600"
-                                                    : "w-2 bg-slate-300 hover:bg-slate-400"
+                                                    ? "w-6 bg-primary"
+                                                    : "w-1.5 bg-muted-foreground/30"
                                             )}
                                             onClick={() => setCurrentPreviewIndex(index)}
                                         />
@@ -403,7 +393,7 @@ export function TrendingProductsManager() {
                             </div>
                         </div>
                     ) : (
-                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
                             {trendingProducts
                                 .sort((a, b) => a.display_order - b.display_order)
                                 .map((trendingProduct, index) => {
@@ -412,9 +402,9 @@ export function TrendingProductsManager() {
                                         <Card
                                             key={trendingProduct._id}
                                             className={cn(
-                                                "overflow-hidden transition-all duration-200 hover:shadow-lg group",
+                                                "overflow-hidden transition-all duration-200 hover:shadow-md group",
                                                 draggedItem?.id === trendingProduct._id && "opacity-50",
-                                                dragOverItem === index && "ring-2 ring-primary"
+                                                dragOverItem === index && "ring-1 ring-primary"
                                             )}
                                             draggable
                                             onDragStart={(e) => handleDragStart(e, index, trendingProduct._id)}
@@ -430,24 +420,24 @@ export function TrendingProductsManager() {
                                                         alt={productInfo?.name || "Product"}
                                                         className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-200"
                                                     />
-                                                    <div className="absolute top-2 right-2 flex gap-1">
-                                                        <Badge className="bg-primary text-primary-foreground">
+                                                    <div className="absolute top-2 right-2">
+                                                        <Badge className="bg-primary text-primary-foreground text-xs">
                                                             #{trendingProduct.display_order}
                                                         </Badge>
                                                     </div>
                                                     <div className="absolute top-2 left-2 cursor-move opacity-0 group-hover:opacity-100 transition-opacity">
-                                                        <div className="bg-black/50 text-white p-1 rounded">
-                                                            <GripVertical className="h-4 w-4" />
+                                                        <div className="bg-foreground/70 text-background p-1 rounded-sm">
+                                                            <GripVertical className="h-3 w-3" />
                                                         </div>
                                                     </div>
                                                 </div>
-                                                <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex items-end justify-end p-3">
+                                                <div className="absolute inset-0 bg-foreground/5 opacity-0 group-hover:opacity-100 transition-opacity flex items-end justify-end p-2">
                                                     <div className="flex gap-1">
                                                         <Button
                                                             variant="secondary"
                                                             size="sm"
                                                             onClick={() => handleOpenDialog(trendingProduct)}
-                                                            className="h-8 w-8 p-0"
+                                                            className="h-7 w-7 p-0"
                                                         >
                                                             <Edit className="h-3 w-3" />
                                                         </Button>
@@ -455,31 +445,31 @@ export function TrendingProductsManager() {
                                                             variant="destructive"
                                                             size="sm"
                                                             onClick={() => handleDeleteClick(trendingProduct._id)}
-                                                            className="h-8 w-8 p-0"
+                                                            className="h-7 w-7 p-0"
                                                         >
                                                             <Trash2 className="h-3 w-3" />
                                                         </Button>
                                                     </div>
                                                 </div>
                                             </div>
-                                            <CardContent className="p-4">
-                                                <h4 className="font-medium truncate">
+                                            <CardContent className="p-3">
+                                                <h4 className="font-medium text-sm truncate">
                                                     {productInfo?.name || "Unknown Product"}
                                                 </h4>
                                                 {productInfo?.description && (
-                                                    <p className="text-sm text-muted-foreground line-clamp-2 mt-1">
+                                                    <p className="text-xs text-muted-foreground line-clamp-2 mt-1">
                                                         {productInfo.description}
                                                     </p>
                                                 )}
-                                                <div className="flex items-center justify-between mt-3">
-                                                    <span className="font-bold text-lg">
+                                                <div className="flex items-center justify-between mt-2">
+                                                    <span className="font-bold text-base">
                                                         ${productInfo?.price || 0}
                                                     </span>
                                                     <Badge variant="secondary" className="text-xs">
                                                         Stock: {productInfo?.stock?.quantity || 0}
                                                     </Badge>
                                                 </div>
-                                                <div className="flex items-center text-xs text-muted-foreground mt-2">
+                                                <div className="flex items-center text-xs text-muted-foreground mt-1">
                                                     <Move className="h-3 w-3 mr-1" />
                                                     Drag to reorder
                                                 </div>
@@ -494,46 +484,46 @@ export function TrendingProductsManager() {
 
             {/* Enhanced Add/Edit Dialog */}
             <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-                <DialogContent className="max-w-4xl max-h-[90vh] overflow-hidden">
-                    <DialogHeader className="border-b pb-4">
-                        <DialogTitle className="text-xl flex items-center gap-2">
-                            <div className="w-10 h-10 rounded-full bg-gradient-to-r from-purple-600 to-pink-600 flex items-center justify-center">
-                                {editingProduct ? <Edit className="h-5 w-5 text-white" /> : <Plus className="h-5 w-5 text-white" />}
+                <DialogContent className="max-w-5xl max-h-[90vh] flex flex-col">
+                    <DialogHeader className="px-6 py-4 border-b">
+                        <DialogTitle className="text-lg flex items-center gap-3">
+                            <div className="w-8 h-8 rounded-md bg-primary flex items-center justify-center">
+                                {editingProduct ? <Edit className="h-4 w-4 text-primary-foreground" /> : <Plus className="h-4 w-4 text-primary-foreground" />}
                             </div>
                             <div>
                                 <div>{editingProduct ? "Edit Trending Product" : "Add Trending Product"}</div>
-                                <div className="text-sm font-normal text-muted-foreground mt-1">
+                                <div className="text-sm font-normal text-muted-foreground">
                                     {editingProduct ? "Update the details of this trending product" : "Select a product to feature in your trending section"}
                                 </div>
                             </div>
                         </DialogTitle>
                     </DialogHeader>
 
-                    <div className="flex h-[calc(90vh-140px)]">
+                    <div className="flex flex-1 overflow-hidden">
                         {/* Product Selection Panel */}
-                        <div className="w-1/2 border-r p-6 flex flex-col">
-                            <div className="space-y-4">
+                        <div className="w-1/2 border-r p-4 flex flex-col">
+                            <div className="space-y-3">
                                 <div>
-                                    <Label className="text-base font-medium">Select Product</Label>
-                                    <p className="text-sm text-muted-foreground mt-1">
+                                    <Label className="text-sm font-medium">Select Product</Label>
+                                    <p className="text-xs text-muted-foreground">
                                         Choose a product to feature in the trending section
                                     </p>
                                 </div>
 
                                 <div className="relative">
-                                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                                    <Search className="absolute left-2 top-1/2 -translate-y-1/2 h-3 w-3 text-muted-foreground" />
                                     <Input
                                         placeholder="Search products..."
                                         value={searchQuery}
                                         onChange={(e) => setSearchQuery(e.target.value)}
-                                        className="pl-10"
+                                        className="pl-7 text-sm h-9"
                                     />
                                     {searchQuery && (
                                         <Button
                                             type="button"
                                             variant="ghost"
                                             size="sm"
-                                            className="absolute right-2 top-1/2 -translate-y-1/2 h-6 w-6 p-0"
+                                            className="absolute right-1 top-1/2 -translate-y-1/2 h-5 w-5 p-0"
                                             onClick={() => setSearchQuery("")}
                                         >
                                             <X className="h-3 w-3" />
@@ -541,71 +531,76 @@ export function TrendingProductsManager() {
                                     )}
                                 </div>
 
-                                <div className="flex items-center gap-2">
+                                <div className="flex items-center gap-1">
                                     <Button
                                         variant={viewMode === "grid" ? "default" : "outline"}
                                         size="sm"
                                         onClick={() => setViewMode("grid")}
+                                        className="h-8 text-xs"
                                     >
-                                        <Grid3x3 className="h-4 w-4 mr-1" />
+                                        <Grid3x3 className="h-3 w-3 mr-1" />
                                         Grid
                                     </Button>
                                     <Button
                                         variant={viewMode === "list" ? "default" : "outline"}
                                         size="sm"
                                         onClick={() => setViewMode("list")}
+                                        className="h-8 text-xs"
                                     >
-                                        <List className="h-4 w-4 mr-1" />
+                                        <List className="h-3 w-3 mr-1" />
                                         List
                                     </Button>
                                 </div>
                             </div>
 
-                            <ScrollArea className="flex-1 mt-4">
+                            <ScrollArea className="flex-1 mt-3">
                                 {availableProducts.length === 0 ? (
-                                    <div className="text-center py-12">
-                                        <Package className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-                                        <p className="text-muted-foreground">
+                                    <div className="text-center py-8">
+                                        <Package className="h-8 w-8 text-muted-foreground mx-auto mb-2" />
+                                        <p className="text-muted-foreground text-sm">
                                             {searchQuery ? "No products match your search" : "No available products"}
                                         </p>
                                     </div>
                                 ) : (
-                                    <div className={viewMode === "grid" ? "grid grid-cols-2 gap-3" : "space-y-2"}>
+                                    <div className={cn(
+                                        "pr-3",
+                                        viewMode === "grid" ? "grid grid-cols-2 gap-2" : "space-y-2"
+                                    )}>
                                         {availableProducts.map((product) => {
                                             const isSelected = selectedProductId === product._id
                                             return (
                                                 <div
                                                     key={product._id}
                                                     className={cn(
-                                                        "relative cursor-pointer rounded-lg border-2 transition-all duration-200",
+                                                        "cursor-pointer rounded-md border transition-all duration-150",
                                                         isSelected
-                                                            ? "border-purple-600 bg-purple-50"
-                                                            : "border-border hover:border-purple-300 hover:bg-muted/50"
+                                                            ? "border-primary bg-primary/5"
+                                                            : "border-border hover:border-primary/50 hover:bg-muted/30"
                                                     )}
                                                     onClick={() => handleProductSelect(product._id)}
                                                 >
                                                     {viewMode === "grid" ? (
-                                                        <div className="p-3">
-                                                            <div className="aspect-square rounded-md overflow-hidden mb-2">
+                                                        <div className="p-2">
+                                                            <div className="aspect-square rounded-sm overflow-hidden mb-1">
                                                                 <img
                                                                     src={product.images?.[0] || "/placeholder.svg"}
                                                                     alt={product.name}
                                                                     className="w-full h-full object-cover"
                                                                 />
                                                             </div>
-                                                            <p className="font-medium text-sm line-clamp-2">{product.name}</p>
-                                                            <p className="text-sm font-bold text-purple-600 mt-1">${product.price}</p>
+                                                            <p className="font-medium text-xs line-clamp-2">{product.name}</p>
+                                                            <p className="text-xs font-bold text-primary mt-0.5">${product.price}</p>
                                                             {isSelected && (
-                                                                <div className="absolute top-2 right-2">
-                                                                    <div className="w-6 h-6 rounded-full bg-purple-600 flex items-center justify-center">
-                                                                        <Check className="h-4 w-4 text-white" />
+                                                                <div className="absolute top-1 right-1">
+                                                                    <div className="w-4 h-4 rounded-full bg-primary flex items-center justify-center">
+                                                                        <Check className="h-3 w-3 text-primary-foreground" />
                                                                     </div>
                                                                 </div>
                                                             )}
                                                         </div>
                                                     ) : (
-                                                        <div className="flex items-center p-3">
-                                                            <div className="w-16 h-16 rounded-md overflow-hidden mr-3 flex-shrink-0">
+                                                        <div className="flex items-center p-2">
+                                                            <div className="w-12 h-12 rounded-sm overflow-hidden mr-2 flex-shrink-0">
                                                                 <img
                                                                     src={product.images?.[0] || "/placeholder.svg"}
                                                                     alt={product.name}
@@ -613,15 +608,15 @@ export function TrendingProductsManager() {
                                                                 />
                                                             </div>
                                                             <div className="flex-1 min-w-0">
-                                                                <p className="font-medium truncate">{product.name}</p>
-                                                                <p className="text-sm text-muted-foreground">${product.price}</p>
+                                                                <p className="font-medium text-sm truncate">{product.name}</p>
+                                                                <p className="text-xs text-muted-foreground">${product.price}</p>
                                                                 <p className="text-xs text-muted-foreground">
                                                                     Stock: {product.stock?.quantity || 0}
                                                                 </p>
                                                             </div>
                                                             {isSelected && (
-                                                                <div className="w-6 h-6 rounded-full bg-purple-600 flex items-center justify-center">
-                                                                    <Check className="h-4 w-4 text-white" />
+                                                                <div className="w-4 h-4 rounded-full bg-primary flex items-center justify-center">
+                                                                    <Check className="h-3 w-3 text-primary-foreground" />
                                                                 </div>
                                                             )}
                                                         </div>
@@ -635,18 +630,18 @@ export function TrendingProductsManager() {
                         </div>
 
                         {/* Product Details & Settings Panel */}
-                        <div className="w-1/2 p-6 flex flex-col">
+                        <div className="w-1/2 p-4 flex flex-col">
                             {selectedProductId ? (
                                 <>
                                     <div className="space-y-4">
                                         <div>
-                                            <Label className="text-base font-medium">Selected Product</Label>
-                                            <p className="text-sm text-muted-foreground mt-1">
+                                            <Label className="text-sm font-medium">Selected Product</Label>
+                                            <p className="text-xs text-muted-foreground">
                                                 Review and configure the selected product
                                             </p>
                                         </div>
 
-                                        <Card className="overflow-hidden">
+                                        <Card>
                                             <div className="aspect-video relative">
                                                 <img
                                                     src={getProductInfo(selectedProductId)?.images?.[0] || "/placeholder.svg"}
@@ -654,20 +649,20 @@ export function TrendingProductsManager() {
                                                     className="w-full h-full object-cover"
                                                 />
                                             </div>
-                                            <CardContent className="p-4">
-                                                <h4 className="font-semibold text-lg mb-2">
+                                            <CardContent className="p-3">
+                                                <h4 className="font-semibold text-sm mb-1">
                                                     {getProductInfo(selectedProductId)?.name}
                                                 </h4>
                                                 {getProductInfo(selectedProductId)?.description && (
-                                                    <p className="text-sm text-muted-foreground mb-3">
+                                                    <p className="text-xs text-muted-foreground mb-2 line-clamp-2">
                                                         {getProductInfo(selectedProductId)?.description}
                                                     </p>
                                                 )}
                                                 <div className="flex items-center justify-between">
-                                                    <span className="text-2xl font-bold text-purple-600">
+                                                    <span className="text-lg font-bold text-primary">
                                                         ${getProductInfo(selectedProductId)?.price || 0}
                                                     </span>
-                                                    <Badge variant="secondary">
+                                                    <Badge variant="secondary" className="text-xs">
                                                         Stock: {getProductInfo(selectedProductId)?.stock?.quantity || 0}
                                                     </Badge>
                                                 </div>
@@ -676,12 +671,12 @@ export function TrendingProductsManager() {
 
                                         <Separator />
 
-                                        <div className="space-y-4">
+                                        <div className="space-y-3">
                                             <div>
-                                                <Label htmlFor="display_order" className="text-base font-medium">
+                                                <Label htmlFor="display_order" className="text-sm font-medium">
                                                     Display Order
                                                 </Label>
-                                                <p className="text-sm text-muted-foreground mt-1">
+                                                <p className="text-xs text-muted-foreground">
                                                     Lower numbers appear first in the trending section
                                                 </p>
                                                 <Input
@@ -690,42 +685,20 @@ export function TrendingProductsManager() {
                                                     min="1"
                                                     value={formData.display_order}
                                                     onChange={(e) => setFormData(prev => ({ ...prev, display_order: Number(e.target.value) }))}
-                                                    className="mt-2"
+                                                    className="mt-1.5 h-9"
                                                 />
                                             </div>
                                         </div>
-                                    </div>
-
-                                    <div className="mt-auto pt-4">
-                                        <DialogFooter className="flex justify-between">
-                                            <Button
-                                                type="button"
-                                                variant="outline"
-                                                onClick={handleCloseDialog}
-                                                className="px-6"
-                                            >
-                                                Cancel
-                                            </Button>
-                                            <Button
-                                                type="submit"
-                                                onClick={handleSubmit}
-                                                disabled={loading}
-                                                className="px-6 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700"
-                                            >
-                                                {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                                                {editingProduct ? "Update Product" : "Add to Trending"}
-                                            </Button>
-                                        </DialogFooter>
                                     </div>
                                 </>
                             ) : (
                                 <div className="flex-1 flex items-center justify-center">
                                     <div className="text-center">
-                                        <div className="w-20 h-20 rounded-full bg-muted flex items-center justify-center mx-auto mb-4">
-                                            <Package className="h-10 w-10 text-muted-foreground" />
+                                        <div className="w-12 h-12 rounded-md bg-muted flex items-center justify-center mx-auto mb-2">
+                                            <Package className="h-6 w-6 text-muted-foreground" />
                                         </div>
-                                        <h4 className="text-lg font-medium mb-2">No Product Selected</h4>
-                                        <p className="text-muted-foreground max-w-sm">
+                                        <h4 className="text-sm font-medium mb-1">No Product Selected</h4>
+                                        <p className="text-muted-foreground text-xs max-w-xs">
                                             Select a product from the left panel to add it to your trending section
                                         </p>
                                     </div>
@@ -733,6 +706,24 @@ export function TrendingProductsManager() {
                             )}
                         </div>
                     </div>
+
+                    <DialogFooter className="px-6 py-4 border-t bg-background">
+                        <Button
+                            type="button"
+                            variant="outline"
+                            onClick={handleCloseDialog}
+                        >
+                            Cancel
+                        </Button>
+                        <Button
+                            type="submit"
+                            onClick={handleSubmit}
+                            disabled={loading || !selectedProductId}
+                        >
+                            {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                            {editingProduct ? "Update Product" : "Add to Trending"}
+                        </Button>
+                    </DialogFooter>
                 </DialogContent>
             </Dialog>
 
@@ -743,7 +734,7 @@ export function TrendingProductsManager() {
                         <DialogTitle>Confirm Removal</DialogTitle>
                     </DialogHeader>
                     <div className="py-4">
-                        <p>Are you sure you want to remove this product from the trending section?</p>
+                        <p className="text-sm">Are you sure you want to remove this product from the trending section?</p>
                     </div>
                     <DialogFooter>
                         <Button variant="outline" onClick={() => setDeleteDialogOpen(false)}>

@@ -19,6 +19,7 @@ export interface iTrendingCategory {
     category_id: string
     display_order: number
     created_at: string
+    is_active: boolean
     category_details?: {
         _id: string
         display_name: string
