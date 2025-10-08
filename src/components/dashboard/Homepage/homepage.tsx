@@ -154,6 +154,8 @@ export function HeroSlidesManager() {
                 await deleteHeroSlide(slideId)
                 toast.success("Hero slide deleted successfully")
             } catch (error: any) {
+                console.log(error);
+
                 toast.error(error.message || "Failed to delete hero slide")
             }
         }

@@ -184,7 +184,7 @@ export const useHomepageStore = create<HomepageState>()(
             deleteHeroSlide: async (id: string) => {
                 set({ heroSlidesLoading: true, error: null })
                 try {
-                    const response = await apiClient.delete(`/store-admin/homepage/hero-slides/${id}`) as ApiResponse<any>
+                    const response = await apiClient.delete(`/store-admin/homepage/hero/${id}`) as ApiResponse<any>
 
                     const data = await response.data
 
