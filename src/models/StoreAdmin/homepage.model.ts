@@ -2,6 +2,8 @@ export interface iHeroSlide {
     _id: string
     store_id: string
     image_url: string
+    description?: string
+    button_text?: string
     title: string
     subtitle?: string
     link?: string
@@ -67,6 +69,8 @@ export interface iHomepageConfig {
 export interface iHeroSlideForm {
     title: string
     subtitle?: string
+    description?: string
+    button_text?: string
     link?: string
     display_order: number
     image?: string
