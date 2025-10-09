@@ -1,7 +1,7 @@
 "use client";
 
 import type React from "react";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback, useMemo } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -22,8 +22,8 @@ import {
 import { useProductStore } from "@/store/StoreAdmin/productStore";
 import { useCategoryStore } from "@/store/StoreAdmin/categoryStore";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Router } from "next/router";
 import { useRouter } from "next/navigation";
+import { debounce } from "@/lib/utils";
 
 interface AddProductsToCategoryPageProps {
   category: any;
@@ -40,7 +40,6 @@ interface Product {
 
 export function AddProductsToCategoryPage({
   category,
-
 }: AddProductsToCategoryPageProps) {
   const {
     productInfo,
@@ -55,6 +54,7 @@ export function AddProductsToCategoryPage({
   const [searchTerm, setSearchTerm] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
+  const [searchInput, setSearchInput] = useState(""); // Separate state for input field
   const itemsPerPage = 10;
 
   // Fetch products when component mounts
@@ -62,7 +62,6 @@ export function AddProductsToCategoryPage({
     fetchProducts({
       page: 1,
       limit: 100, // Get more products for selection
-      search: searchTerm || undefined,
     });
 
     if (category.products.length > 0) {
@@ -73,33 +72,60 @@ export function AddProductsToCategoryPage({
 
     setSelectedProducts(category.products);
     setCurrentPage(1);
-  }, [searchTerm, fetchProducts]);
+  }, [fetchProducts, category.products]); // Added category.products to dependencies
+
+  // Create a debounced function for search
+  const debouncedSearch = useCallback(
+    debounce((term: string) => {
+      setSearchTerm(term);
+      setCurrentPage(1); // Reset to first page when searching
+    }, 500),
+    []
+  );
+
+  // Handle search input change
+  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    setSearchInput(value);
+    debouncedSearch(value);
+  };
 
   // Filter products based on search term and exclude already assigned products
-  const filteredProducts = (productInfo?.products || []).filter((product) => {
-    const matchesSearch =
-      !searchTerm ||
-      product.name.toLowerCase().includes(searchTerm.toLowerCase());
+  const filteredProducts = useMemo(() => {
+    if (!productInfo?.products) return [];
 
-    // Optionally exclude products already in this category
-    const notInCategory =
-      !category || product.store_category_id !== category._id;
+    return productInfo.products.filter((product) => {
+      const matchesSearch =
+        !searchTerm ||
+        product.name.toLowerCase().includes(searchTerm.toLowerCase());
 
-    return matchesSearch && notInCategory && product.is_active;
-  });
+      // Optionally exclude products already in this category
+      const notInCategory =
+        !category || product.store_category_id !== category._id;
+
+      return matchesSearch && notInCategory && product.is_active;
+    });
+  }, [productInfo?.products, searchTerm, category]);
 
   // Paginate filtered products
   const totalPages = Math.ceil(filteredProducts.length / itemsPerPage);
-  const paginatedProducts = filteredProducts.slice(
-    (currentPage - 1) * itemsPerPage,
-    currentPage * itemsPerPage,
-  );
+  const paginatedProducts = useMemo(() => {
+    return filteredProducts.slice(
+      (currentPage - 1) * itemsPerPage,
+      currentPage * itemsPerPage,
+    );
+  }, [filteredProducts, currentPage, itemsPerPage]);
 
   const handleSelectAll = (checked: boolean) => {
     if (checked) {
-      setSelectedProducts(paginatedProducts.map((product) => product._id));
+      setSelectedProducts(prev => [
+        ...prev.filter(id => !paginatedProducts.find(p => p._id === id)),
+        ...paginatedProducts.map((product) => product._id)
+      ]);
     } else {
-      setSelectedProducts([]);
+      setSelectedProducts(prev =>
+        prev.filter(id => !paginatedProducts.find(p => p._id === id))
+      );
     }
   };
 
@@ -175,8 +201,8 @@ export function AddProductsToCategoryPage({
           <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
           <Input
             placeholder="Search products..."
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
+            value={searchInput}
+            onChange={handleSearchChange}
             className="pl-10"
             disabled={isFormDisabled}
           />
