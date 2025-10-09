@@ -21,9 +21,9 @@ interface ApiResponse<T> {
 }
 
 class ApiClient {
-    private baseURL = "https://backend.dhaneri.com/api"
+    // private baseURL = "https://backend.dhaneri.com/api"
     // http://localhost:5050/api/store-admin/analytics/customer-behavior?period=1d
-    // private baseURL = "http://localhost:5050/api"
+    private baseURL = "http://localhost:5050/api"
     private axiosInstance: AxiosInstance
     private isRefreshing = false
     private failedRequests: Array<{

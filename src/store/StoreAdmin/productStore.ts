@@ -63,6 +63,8 @@ export const useProductStore = create<ProductState>()(
                     const response = await apiClient.get<iProductInfo>("/store-admin/products", { params: filters }) as any
 
                     if (response.success) {
+                        console.log(response.data.data);
+
                         set({ productInfo: response.data.data, loading: false, error: null })
                     } else {
                         set({ error: response.error || 'Failed to fetch products', loading: false })

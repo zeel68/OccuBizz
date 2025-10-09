@@ -382,7 +382,7 @@ export function ProductsTable({
                             <TableCell>
                                 <div className="space-y-1">
                                     <div className="flex items-center">
-                                        <DollarSign className="h-4 w-4 mr-1 text-muted-foreground" />
+                                        {/* <DollarSign className="h-4 w-4 mr-1 text-muted-foreground" /> */}
                                         <span className="font-medium">{formatCurrency(product.price)}</span>
                                     </div>
                                     {product.compare_price && product.compare_price > product.price && (

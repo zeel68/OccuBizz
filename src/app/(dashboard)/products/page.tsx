@@ -182,10 +182,11 @@ export default function ProductsPage() {
         )
     }
 
-    const totalItems = productInfo?.pagination?.total ?? 0
-    const totalPages = productInfo?.pagination?.totalPages ?? 1
-    const hasNext = productInfo?.pagination?.hasNext ?? false
-    const hasPrev = productInfo?.pagination?.hasPrev ?? false
+    // Fix for pagination - ensure we have default values if pagination data is missing
+    const totalItems = productInfo?.pagination?.total ?? productInfo?.products?.length ?? 0
+    const totalPages = productInfo?.pagination?.totalPages ?? Math.ceil(totalItems / itemsPerPage) ?? 1
+    const hasNext = productInfo?.pagination?.hasNext ?? currentPage < totalPages
+    const hasPrev = productInfo?.pagination?.hasPrev ?? currentPage > 1
 
     const handlePageChange = (page: number) => {
         if (page >= 1 && page <= totalPages) {
@@ -517,7 +518,7 @@ export default function ProductsPage() {
                         categories={allCategories}
                     />
 
-                    {/* Pagination - Same style as Orders Table */}
+                    {/* Pagination - Fixed version */}
                     {totalItems > 0 && (
                         <div className="flex flex-col sm:flex-row items-center justify-between mt-6 gap-4">
                             <div className="flex items-center space-x-2">
