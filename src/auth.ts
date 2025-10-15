@@ -12,16 +12,19 @@ import apiClient from "./lib/apiCalling";
 export async function refreshToken(token: JWT): Promise<JWT | null> {
   try {
     // Call your backend refresh endpoint
-    const response = await fetch(`https://backend.dhaneri.com/api/auth/refresh`, {
+    const response = await fetch(`https://backend.dhaneri.com/api/auth/refresh-token`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
         Authorization: `Bearer ${token.refreshToken}`,
       },
+      body: JSON.stringify({ refreshToken: token.refreshToken }),
     })
 
     if (!response.ok) {
       throw new Error("Failed to refresh token")
+    } else {
+      console.log("Token refreshed successfully");
     }
 
     const data = await response.json()

@@ -1,7 +1,7 @@
 "use client";
 
 import type React from "react";
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useCallback, useMemo } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -48,14 +48,14 @@ interface AddEditCategoryPageProps {
 export default function AddEditCategoryPage({ categoryId }: AddEditCategoryPageProps) {
     const router = useRouter();
     const formRef = useRef<HTMLFormElement>(null);
+
     const {
         createCategory,
         updateCategory,
-        categories,
         allCategories,
         fetchAllCategories,
-        fetchParentCategory,
         loading,
+        error
     } = useCategoryStore();
 
     const [isSubmitting, setIsSubmitting] = useState(false);
@@ -63,6 +63,7 @@ export default function AddEditCategoryPage({ categoryId }: AddEditCategoryPageP
     const [newFilterOption, setNewFilterOption] = useState("");
     const [activeTab, setActiveTab] = useState("basic");
     const [imageUploading, setImageUploading] = useState(false);
+    const [isInitialized, setIsInitialized] = useState(false);
 
     const [newFilter, setNewFilter] = useState<iFilterOption>({
         name: "",
@@ -93,39 +94,62 @@ export default function AddEditCategoryPage({ categoryId }: AddEditCategoryPageP
         attributes: [],
     });
 
-    // Fetch categories and category data if editing
+    // Memoize filtered categories to prevent unnecessary recalculations
+    const filteredCategories = useMemo(() => {
+        return allCategories.filter((category) => category._id !== categoryId);
+    }, [allCategories, categoryId]);
+
+    // Initialize data on component mount
     useEffect(() => {
-        fetchParentCategory();
-        fetchAllCategories();
-        if (categoryId) {
-            console.log(allCategories);
-
-            // Find category from the categories array
-            const category = allCategories.find(cat => cat._id === categoryId);
-            if (category) {
-                setFormData({
-                    name: category.display_name || "",
-                    display_name: category.display_name || "",
-                    slug: category.slug || "",
-                    description: category.description || "",
-                    parent_id: category.parent_id || "",
-                    sort_order: category.sort_order || 1,
-                    is_active: category.is_active !== false,
-                    is_primary: category.is_primary || false,
-                    image_url: category.image_url || category.img_url || "",
-                    filters: (category.config?.filters || []).map((f: any) => ({
-                        ...f,
-                        options: f.options ? [...f.options] : []
-                    })),
-                    attributes: category.config?.attributes || [],
-                });
+        const initializeData = async () => {
+            try {
+                await fetchAllCategories();
+                setIsInitialized(true);
+            } catch (error) {
+                toast.error("Failed to load categories");
             }
+        };
+
+        initializeData();
+    }, [fetchAllCategories]);
+
+    // Populate form data when editing a category
+    useEffect(() => {
+        if (!isInitialized || !categoryId) return;
+
+        const category = allCategories.find(cat => cat._id === categoryId);
+        if (category) {
+            setFormData({
+                name: category.display_name || "",
+                display_name: category.display_name || "",
+                slug: category.slug || "",
+                description: category.description || "",
+                parent_id: category.parent_id || "",
+                sort_order: category.sort_order || 1,
+                is_active: category.is_active !== false,
+                is_primary: category.is_primary || false,
+                image_url: category.image_url || category.img_url || "",
+                filters: (category.config?.filters || []).map((f: any) => ({
+                    ...f,
+                    options: f.options ? [...f.options] : []
+                })),
+                attributes: category.config?.attributes || [],
+            });
         }
-    }, [categoryId, fetchParentCategory, categories, fetchAllCategories]);
+    }, [categoryId, allCategories, isInitialized]);
 
-    const filteredCategories = categories.filter((category) => category._id !== categoryId);
+    // Generate slug from display name with proper sanitization
+    const generateSlug = useCallback((displayName: string) => {
+        return displayName
+            .toLowerCase()
+            .trim()
+            .replace(/[^\w\s-]/g, '') // Remove special characters
+            .replace(/\s+/g, '-') // Replace spaces with hyphens
+            .replace(/-+/g, '-'); // Replace multiple hyphens with single hyphen
+    }, []);
 
-    const uploadToCloudinary = async (file: File): Promise<string> => {
+    // Optimized image upload function
+    const uploadToCloudinary = useCallback(async (file: File): Promise<string> => {
         setImageUploading(true);
         try {
             const formDataUpload = new FormData();
@@ -151,11 +175,15 @@ export default function AddEditCategoryPage({ categoryId }: AddEditCategoryPageP
 
             const data = await res.json();
             return data.secure_url;
+        } catch (error) {
+            toast.error("Image upload failed");
+            throw error;
         } finally {
             setImageUploading(false);
         }
-    };
+    }, []);
 
+    // Handle form submission with optimized error handling
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
 
@@ -178,7 +206,7 @@ export default function AddEditCategoryPage({ categoryId }: AddEditCategoryPageP
 
             const categoryData = {
                 display_name: formData.display_name.toLowerCase(),
-                slug: formData.slug || formData.display_name.toLowerCase().trim().replace(" ", "-"),
+                slug: formData.slug || generateSlug(formData.display_name),
                 description: formData.description,
                 parent_id: formData.parent_id || null,
                 sort_order: Number(formData.sort_order),
@@ -193,13 +221,9 @@ export default function AddEditCategoryPage({ categoryId }: AddEditCategoryPageP
             };
 
             if (categoryId) {
-                console.log(categoryData);
-
                 await updateCategory(categoryId, categoryData as any);
                 toast.success("Category updated successfully");
             } else {
-                console.log(categoryData);
-
                 await createCategory(categoryData as any);
                 toast.success("Category created successfully");
             }
@@ -219,7 +243,8 @@ export default function AddEditCategoryPage({ categoryId }: AddEditCategoryPageP
         }
     };
 
-    const handleAddFilterOption = () => {
+    // Filter management functions
+    const handleAddFilterOption = useCallback(() => {
         if (
             newFilterOption.trim() &&
             !newFilter.options.includes(newFilterOption.trim())
@@ -230,16 +255,16 @@ export default function AddEditCategoryPage({ categoryId }: AddEditCategoryPageP
             }));
             setNewFilterOption("");
         }
-    };
+    }, [newFilterOption, newFilter.options]);
 
-    const handleRemoveFilterOption = (option: string) => {
+    const handleRemoveFilterOption = useCallback((option: string) => {
         setNewFilter((prev) => ({
             ...prev,
             options: prev.options.filter((o) => o !== option),
         }));
-    };
+    }, []);
 
-    const handleAddFilter = () => {
+    const handleAddFilter = useCallback(() => {
         if (newFilter.name.trim()) {
             setFormData((prev) => ({
                 ...prev,
@@ -254,17 +279,18 @@ export default function AddEditCategoryPage({ categoryId }: AddEditCategoryPageP
             });
             toast.success("Filter added successfully");
         }
-    };
+    }, [newFilter]);
 
-    const handleRemoveFilter = (index: number) => {
+    const handleRemoveFilter = useCallback((index: number) => {
         setFormData((prev) => ({
             ...prev,
             filters: prev.filters.filter((_, i) => i !== index),
         }));
         toast.info("Filter removed");
-    };
+    }, []);
 
-    const handleAddAttribute = () => {
+    // Attribute management functions
+    const handleAddAttribute = useCallback(() => {
         if (newAttribute.name.trim()) {
             setFormData((prev: any) => ({
                 ...prev,
@@ -278,26 +304,49 @@ export default function AddEditCategoryPage({ categoryId }: AddEditCategoryPageP
             });
             toast.success("Attribute added successfully");
         }
-    };
+    }, [newAttribute]);
 
-    const handleRemoveAttribute = (index: number) => {
+    const handleRemoveAttribute = useCallback((index: number) => {
         setFormData((prev) => ({
             ...prev,
             attributes: prev.attributes.filter((_, i) => i !== index),
         }));
         toast.info("Attribute removed");
-    };
+    }, []);
 
-    const handleImageSelect = (files: File[]) => {
+    // Image management functions
+    const handleImageSelect = useCallback((files: File[]) => {
         setSelectedImages(files.slice(0, 1)); // Only allow one image for categories
-    };
+    }, []);
 
-    const handleImageRemove = () => {
+    const handleImageRemove = useCallback(() => {
         setSelectedImages([]);
         setFormData((prev) => ({ ...prev, image_url: "" }));
-    };
+    }, []);
 
+    // Display loading state while initializing
+    if (!isInitialized) {
+        return (
+            <div className="container mx-auto py-6 flex justify-center items-center">
+                <Loader2 className="h-8 w-8 animate-spin mr-2" />
+                <span>Loading categories...</span>
+            </div>
+        );
+    }
 
+    // Display error state if API call failed
+    if (error) {
+        return (
+            <div className="container mx-auto py-6">
+                <Alert variant="destructive">
+                    <AlertCircle className="h-4 w-4" />
+                    <AlertDescription>
+                        Failed to load categories. Please try again later.
+                    </AlertDescription>
+                </Alert>
+            </div>
+        );
+    }
 
     return (
         <div className="container mx-auto py-6 space-y-6">
@@ -360,7 +409,7 @@ export default function AddEditCategoryPage({ categoryId }: AddEditCategoryPageP
                                                         setFormData((prev) => ({
                                                             ...prev,
                                                             display_name: e.target.value,
-                                                            slug: e.target.value.toLowerCase().trim().replace(/\s+/g, '-') || formData.slug,
+                                                            slug: e.target.value ? generateSlug(e.target.value) : formData.slug,
                                                         }))
                                                     }
                                                     placeholder="Enter display name"
@@ -425,7 +474,7 @@ export default function AddEditCategoryPage({ categoryId }: AddEditCategoryPageP
                                                         <SelectItem value="none">
                                                             No Parent (Root Category)
                                                         </SelectItem>
-                                                        {allCategories.map((cat) => (
+                                                        {filteredCategories.map((cat) => (
                                                             <SelectItem key={cat._id} value={cat._id}>
                                                                 {cat.display_name}
                                                             </SelectItem>
@@ -884,7 +933,7 @@ export default function AddEditCategoryPage({ categoryId }: AddEditCategoryPageP
                                     <CardContent>
                                         <div className="flex items-center gap-2">
                                             <span className="text-sm text-muted-foreground">
-                                                {categories.find((c: any) => c._id === formData.parent_id)?.display_name}
+                                                {allCategories.find((c: any) => c._id === formData.parent_id)?.display_name}
                                             </span>
                                         </div>
                                     </CardContent>

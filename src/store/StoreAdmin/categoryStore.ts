@@ -89,21 +89,18 @@ export const useCategoryStore = create<CategoryState>()(
 
                 try {
                     // Create API client without session dependency
-
-
                     const response = await apiClient.get(
                         "/store-admin/getStoreAllCategories",
                     ) as any;
 
 
                     if (response.success) {
-                        const data = response.data.data || response.data;
+                        const data = response.data.data;
                         set({
                             allCategories: data,
                             loading: false,
                             lastFetch: now,
                         });
-
                     } else {
                         set({
                             allCategories: [],
