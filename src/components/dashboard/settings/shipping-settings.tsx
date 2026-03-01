@@ -10,9 +10,10 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 import { Badge } from "@/components/ui/badge"
 import { Textarea } from "@/components/ui/textarea"
 import { toast } from "sonner"
-import { Save, Loader2, Truck, Plus, Edit, Trash2, MapPin } from 'lucide-react'
+import { Save, Loader2, Truck, Plus, Edit, Trash2, MapPin, UserX } from 'lucide-react'
 import { useStoreConfigStore } from "@/store/StoreAdmin/storeConfigStore"
 import { iStoreConfig } from "@/models/StoreAdmin/storeconfig.model"
+import { Switch } from "@/components/ui/switch"
 
 
 interface ShippingSettingsProps {
@@ -52,6 +53,8 @@ export function ShippingSettings({ storeConfig }: ShippingSettingsProps) {
     const [isDialogOpen, setIsDialogOpen] = useState(false)
     const [editingZone, setEditingZone] = useState<ShippingZone | null>(null)
     const [editingZoneIndex, setEditingZoneIndex] = useState<number>(-1)
+    const [allowGuestCheckout, setAllowGuestCheckout] = useState(false)
+    const [freeShippingThreshold, setFreeShippingThreshold] = useState<number>(0)
 
     const [zoneForm, setZoneForm] = useState<ShippingZone>({
         name: "",
@@ -70,6 +73,12 @@ export function ShippingSettings({ storeConfig }: ShippingSettingsProps) {
 
         if (storeConfig?.config?.shipping_zones) {
             setShippingZones(storeConfig.config?.shipping_zones as any)
+        }
+        if (storeConfig?.config?.allow_guest_checkout !== undefined) {
+            setAllowGuestCheckout(storeConfig.config.allow_guest_checkout)
+        }
+        if (storeConfig?.config?.free_shipping_threshold !== undefined) {
+            setFreeShippingThreshold(storeConfig.config.free_shipping_threshold)
         }
     }, [storeConfig])
 
@@ -190,7 +199,9 @@ export function ShippingSettings({ storeConfig }: ShippingSettingsProps) {
     const handleSaveSettings = async () => {
         try {
             let shippingInfo = {
-                shipping_zones: shippingZones
+                shipping_zones: shippingZones,
+                allow_guest_checkout: allowGuestCheckout,
+                free_shipping_threshold: freeShippingThreshold,
             }
 
             await updateStoreConfig(shippingInfo as any)
@@ -208,6 +219,42 @@ export function ShippingSettings({ storeConfig }: ShippingSettingsProps) {
 
     return (
         <div className="space-y-6">
+            {/* Guest Checkout Toggle */}
+            <Card>
+                <CardHeader>
+                    <CardTitle className="flex items-center gap-2">
+                        <UserX className="h-5 w-5" />
+                        Checkout Settings
+                    </CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-6">
+                    <div className="flex items-center justify-between">
+                        <div className="space-y-0.5">
+                            <Label className="text-base">Allow Guest Checkout</Label>
+                            <p className="text-sm text-muted-foreground">
+                                Let customers place orders without creating an account
+                            </p>
+                        </div>
+                        <Switch
+                            checked={allowGuestCheckout}
+                            onCheckedChange={setAllowGuestCheckout}
+                        />
+                    </div>
+                    <div className="space-y-2">
+                        <Label>Free Shipping Threshold (₹)</Label>
+                        <Input
+                            type="number"
+                            value={freeShippingThreshold}
+                            onChange={(e) => setFreeShippingThreshold(Number(e.target.value))}
+                            placeholder="e.g., 999"
+                        />
+                        <p className="text-sm text-muted-foreground">
+                            Orders above this amount get free shipping. Set to 0 to disable.
+                        </p>
+                    </div>
+                </CardContent>
+            </Card>
+
             <Card>
                 <CardHeader>
                     <CardTitle className="flex items-center gap-2">
