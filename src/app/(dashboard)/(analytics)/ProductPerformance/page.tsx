@@ -957,7 +957,7 @@ export default function ProductPerformanceAnalytics() {
                         cx="50%"
                         cy="50%"
                         labelLine={false}
-                        label={({ percent }) => `${((percent as any) * 100).toFixed(0)}%`}
+                        label={({ percent }: any) => `${((percent as any) * 100).toFixed(0)}%`}
                         outerRadius={100}
                         innerRadius={60}
                         fill="#8884d8"
@@ -972,7 +972,7 @@ export default function ProductPerformanceAnalytics() {
                       </Pie>
                       <Tooltip
                         content={<CustomTooltip />}
-                        formatter={(value: number) => [`$${value.toLocaleString()}`, 'Revenue']}
+                        formatter={(value: any) => [`$${value?.toLocaleString()}`, 'Revenue']}
                       />
                       <Legend />
                     </PieChart>
