@@ -222,12 +222,20 @@ export default function ReviewsPage() {
             <Star className="h-4 w-4 text-yellow-600" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">4.6</div>
+            <div className="text-2xl font-bold">
+              {reviewInfo?.reviews?.length
+                ? (reviewInfo.reviews.reduce((acc, r) => acc + (r.rating || 0), 0) / reviewInfo.reviews.length).toFixed(1)
+                : "0"}
+            </div>
             <div className="flex items-center mt-1">
               {[1, 2, 3, 4, 5].map((star) => (
                 <Star
                   key={star}
-                  className={`h-3 w-3 ${star <= 4 ? "text-yellow-400 fill-current" : "text-gray-300"
+                  className={`h-3 w-3 ${star <= Math.round(
+                    reviewInfo?.reviews?.length
+                      ? reviewInfo.reviews.reduce((acc, r) => acc + (r.rating || 0), 0) / reviewInfo.reviews.length
+                      : 0
+                  ) ? "text-yellow-400 fill-current" : "text-gray-300"
                     }`}
                 />
               ))}
@@ -241,9 +249,6 @@ export default function ReviewsPage() {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{totalItems}</div>
-            <Badge variant="secondary" className="mt-1">
-              +12% this month
-            </Badge>
           </CardContent>
         </Card>
         <Card>
@@ -258,9 +263,6 @@ export default function ReviewsPage() {
               {reviewInfo?.reviews.filter((r) => r.status === "pending")
                 .length || 0}
             </div>
-            <Badge variant="destructive" className="mt-1">
-              Needs Response
-            </Badge>
           </CardContent>
         </Card>
         <Card>
@@ -274,9 +276,6 @@ export default function ReviewsPage() {
             <div className="text-2xl font-bold">
               {reviewInfo?.reviews.filter((r) => r.rating === 5).length || 0}
             </div>
-            <Badge variant="secondary" className="mt-1">
-              72% of total
-            </Badge>
           </CardContent>
         </Card>
       </div>
