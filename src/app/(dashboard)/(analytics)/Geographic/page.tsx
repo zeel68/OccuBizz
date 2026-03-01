@@ -756,7 +756,7 @@ export default function GeographicAnalytics() {
                         cx="50%"
                         cy="50%"
                         labelLine={false}
-                        label={({ source, percent }) => `${source}: ${((percent as number) * 100).toFixed(0)}%`}
+                        label={({ source, percent }: any) => `${source}: ${((percent as number) * 100).toFixed(0)}%`}
                         outerRadius={80}
                         fill="#8884d8"
                         dataKey="sessions"
@@ -855,7 +855,7 @@ export default function GeographicAnalytics() {
                         cx="50%"
                         cy="50%"
                         labelLine={false}
-                        label={({ deviceType, percent }) => `${deviceType}: ${((percent as any) * 100).toFixed(0)}%`}
+                        label={({ deviceType, percent }: any) => `${deviceType}: ${((percent as any) * 100).toFixed(0)}%`}
                         outerRadius={80}
                         fill="#8884d8"
                         dataKey="sessions"
