@@ -483,7 +483,7 @@ export default function CustomerBehaviorAnalytics() {
                         value={data?.customerLifetimeValue.totalCustomers.toLocaleString() || "0"}
                         subtitle={`${data?.loyaltyMetrics.activeCustomers || 0} active this month`}
                         icon={<Users className="h-6 w-6" />}
-                        trend={8.5}
+
                         color="primary"
                     />
                     <MetricCard
@@ -491,7 +491,7 @@ export default function CustomerBehaviorAnalytics() {
                         value={`$${data?.customerLifetimeValue.avgLifetimeValue.toFixed(0) || "0"}`}
                         subtitle={`$${data?.customerLifetimeValue.medianLifetimeValue.toFixed(0) || "0"} median`}
                         icon={<DollarSign className="h-6 w-6" />}
-                        trend={12.3}
+
                         color="secondary"
                     />
                     <MetricCard
@@ -499,7 +499,7 @@ export default function CustomerBehaviorAnalytics() {
                         value={`${data?.loyaltyMetrics.repeatPurchaseRate.toFixed(1) || "0"}%`}
                         subtitle="Repeat purchase rate"
                         icon={<Heart className="h-6 w-6" />}
-                        trend={5.7}
+
                         color="accent"
                     />
                     <MetricCard
@@ -507,7 +507,7 @@ export default function CustomerBehaviorAnalytics() {
                         value={`$${(data?.customerLifetimeValue.totalRevenue ?? 1 / 1000).toFixed(1) || "0"}K`}
                         subtitle="All time revenue"
                         icon={<TrendingUp className="h-6 w-6" />}
-                        trend={15.2}
+
                         color="muted"
                     />
                 </div>
@@ -957,10 +957,6 @@ export default function CustomerBehaviorAnalytics() {
                                             <p className="text-sm text-muted-foreground mb-2">Repeat Purchase Rate</p>
                                             <div className="flex items-end gap-2">
                                                 <span className="text-3xl font-bold">{data?.loyaltyMetrics.repeatPurchaseRate.toFixed(1)}%</span>
-                                                <span className="text-green-600 flex items-center text-sm mb-1">
-                                                    <TrendingUp className="h-4 w-4 mr-1" />
-                                                    +5.2%
-                                                </span>
                                             </div>
                                         </div>
                                     </div>

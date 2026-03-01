@@ -485,7 +485,7 @@ export default function ConversionFunnelAnalytics() {
             value={overallFunnel.totalSessions.toLocaleString()}
             subtitle="Initial visits"
             icon={<Users className="h-6 w-6" />}
-            trend={8.5}
+
             color="primary"
           />
           <MetricCard
@@ -493,7 +493,7 @@ export default function ConversionFunnelAnalytics() {
             value={overallFunnel.productViews.toLocaleString()}
             subtitle={`${viewRate.toFixed(1)}% view rate`}
             icon={<Eye className="h-6 w-6" />}
-            trend={12.3}
+
             color="secondary"
           />
           <MetricCard
@@ -501,7 +501,7 @@ export default function ConversionFunnelAnalytics() {
             value={overallFunnel.cartAdds.toLocaleString()}
             subtitle={`${cartRate.toFixed(1)}% cart rate`}
             icon={<ShoppingCart className="h-6 w-6" />}
-            trend={5.7}
+
             color="accent"
           />
           <MetricCard
@@ -509,7 +509,7 @@ export default function ConversionFunnelAnalytics() {
             value={overallFunnel.conversions.toLocaleString()}
             subtitle={`${conversionRate.toFixed(1)}% conversion rate`}
             icon={<TargetIcon className="h-6 w-6" />}
-            trend={15.2}
+
             color="muted"
           />
         </div>

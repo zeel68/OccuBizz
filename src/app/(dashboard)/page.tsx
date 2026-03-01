@@ -227,19 +227,16 @@ export default function AnalyticsPage() {
         })
     }
 
-    const getGrowthData = (current: number, previous: number = current * 0.85) => {
-        const growth = ((current - previous) / previous) * 100
-        return {
-            value: growth,
-            isPositive: growth >= 0,
-            formatted: `${growth >= 0 ? '+' : ''}${growth.toFixed(1)}%`
-        }
-    }
+    const formatGrowth = (growthPercent: number) => ({
+        value: growthPercent,
+        isPositive: growthPercent >= 0,
+        formatted: `${growthPercent >= 0 ? '+' : ''}${growthPercent.toFixed(1)}%`
+    })
 
-    const revenueGrowth = getGrowthData(dashboardData?.overview?.monthlyRevenue || 0)
-    const ordersGrowth = getGrowthData(dashboardData?.overview?.totalOrders || 0)
-    const customersGrowth = getGrowthData(dashboardData?.overview?.totalCustomers || 0)
-    const productsGrowth = getGrowthData(dashboardData?.overview?.totalProducts || 0)
+    const revenueGrowth = formatGrowth(dashboardData?.growth?.revenue?.growth || 0)
+    const ordersGrowth = formatGrowth(dashboardData?.growth?.orders?.growth || 0)
+    const customersGrowth = formatGrowth(dashboardData?.growth?.customers?.growth || 0)
+    const productsGrowth = formatGrowth(0)
 
     if (error) {
         return (
@@ -643,7 +640,7 @@ export default function AnalyticsPage() {
                         />
                         <MetricCard
                             title="Conversion Rate"
-                            value="2.4%"
+                            value={formatPercentage(dashboardData?.overview?.overallConversionRate || dashboardData?.conversion?.overallRate || 0)}
                             icon={TrendingUp}
                             description="Visitors to customers"
                             isLoading={loading}
@@ -706,28 +703,35 @@ export default function AnalyticsPage() {
                         </DataCard>
                         <Card className="hover:shadow-lg transition-shadow">
                             <CardHeader>
-                                <CardTitle>Sales Performance Metrics</CardTitle>
-                                <CardDescription>Key performance indicators breakdown</CardDescription>
+                                <CardTitle>Traffic Sources</CardTitle>
+                                <CardDescription>Sessions by traffic source</CardDescription>
                             </CardHeader>
                             <CardContent className="space-y-6">
-                                {[
-                                    { label: "Online Sales", value: 65, color: "bg-blue-500" },
-                                    { label: "In-Store Sales", value: 35, color: "bg-green-500" },
-                                    { label: "Mobile Sales", value: 45, color: "bg-purple-500" },
-                                ].map((item, index) => (
-                                    <div key={index} className="space-y-2">
-                                        <div className="flex items-center justify-between">
-                                            <span className="text-sm font-medium">{item.label}</span>
-                                            <span className="text-sm font-semibold">{item.value}%</span>
-                                        </div>
-                                        <div className="relative w-full h-2 bg-muted rounded-full overflow-hidden">
-                                            <div
-                                                className={`absolute top-0 left-0 h-full ${item.color} transition-all duration-500`}
-                                                style={{ width: `${item.value}%` }}
-                                            />
-                                        </div>
-                                    </div>
-                                ))}
+                                {(() => {
+                                    const sources = dashboardData?.traffic?.sources || []
+                                    const totalSessions = sources.reduce((sum, s) => sum + (s.sessions || 0), 0)
+                                    const colors = ['bg-blue-500', 'bg-green-500', 'bg-purple-500', 'bg-amber-500', 'bg-rose-500']
+                                    return sources.slice(0, 5).map((source, index) => {
+                                        const pct = totalSessions > 0 ? (source.sessions / totalSessions) * 100 : 0
+                                        return (
+                                            <div key={index} className="space-y-2">
+                                                <div className="flex items-center justify-between">
+                                                    <span className="text-sm font-medium capitalize">{source.source || 'Direct'}</span>
+                                                    <span className="text-sm font-semibold">{formatNumber(source.sessions)} ({pct.toFixed(1)}%)</span>
+                                                </div>
+                                                <div className="relative w-full h-2 bg-muted rounded-full overflow-hidden">
+                                                    <div
+                                                        className={`absolute top-0 left-0 h-full ${colors[index % colors.length]} transition-all duration-500`}
+                                                        style={{ width: `${pct}%` }}
+                                                    />
+                                                </div>
+                                            </div>
+                                        )
+                                    })
+                                })()}
+                                {(!dashboardData?.traffic?.sources || dashboardData.traffic.sources.length === 0) && (
+                                    <p className="text-sm text-muted-foreground text-center py-4">No traffic data available</p>
+                                )}
                             </CardContent>
                         </Card>
                     </div>
@@ -865,18 +869,12 @@ export default function AnalyticsPage() {
                                         <Skeleton className="h-64 w-full" />
                                     ) : (
                                         <ResponsiveContainer width="100%" height={250}>
-                                            <BarChart data={[
-                                                { name: 'United States', value: 400 },
-                                                { name: 'United Kingdom', value: 300 },
-                                                { name: 'Canada', value: 200 },
-                                                { name: 'Australia', value: 150 },
-                                                { name: 'Germany', value: 100 },
-                                            ]}>
+                                            <BarChart data={(dashboardData?.geographic?.byCountry || []).slice(0, 5).map(c => ({ name: c.country || 'Unknown', value: c.orders || 0 }))}>
                                                 <CartesianGrid strokeDasharray="3 3" opacity={0.1} />
                                                 <XAxis dataKey="name" style={{ fontSize: '11px' }} />
                                                 <YAxis style={{ fontSize: '12px' }} />
                                                 <Tooltip />
-                                                <Bar dataKey="value" fill="#3b82f6" radius={[4, 4, 0, 0]} />
+                                                <Bar dataKey="value" fill="#3b82f6" radius={[4, 4, 0, 0]} name="Orders" />
                                             </BarChart>
                                         </ResponsiveContainer>
                                     )}
@@ -892,22 +890,18 @@ export default function AnalyticsPage() {
                                         <ResponsiveContainer width="100%" height={250}>
                                             <PieChart>
                                                 <Pie
-                                                    data={[
-                                                        { name: 'Mobile', value: 45 },
-                                                        { name: 'Desktop', value: 35 },
-                                                        { name: 'Tablet', value: 20 },
-                                                    ]}
+                                                    data={(dashboardData?.traffic?.sources || []).slice(0, 5).map(s => ({ name: s.source || 'Direct', value: s.sessions || 0 }))}
                                                     cx="50%"
                                                     cy="50%"
                                                     labelLine={false}
-                                                    label={({ name, percent }) => `${name} ${((percent as any) * 100).toFixed(0)}%`}
+                                                    label={({ name, percent }: any) => `${name} ${((percent as number) * 100).toFixed(0)}%`}
                                                     outerRadius={80}
                                                     fill="#8884d8"
                                                     dataKey="value"
                                                 >
-                                                    <Cell fill="#3b82f6" />
-                                                    <Cell fill="#10b981" />
-                                                    <Cell fill="#f59e0b" />
+                                                    {(dashboardData?.traffic?.sources || []).slice(0, 5).map((_, index) => (
+                                                        <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                                                    ))}
                                                 </Pie>
                                                 <Tooltip />
                                                 <Legend />
@@ -1008,18 +1002,12 @@ export default function AnalyticsPage() {
                             isLoading={loading}
                         >
                             <ResponsiveContainer width="100%" height={320}>
-                                <BarChart data={[
-                                    { name: 'Electronics', revenue: 4000 },
-                                    { name: 'Clothing', revenue: 3000 },
-                                    { name: 'Home & Kitchen', revenue: 2000 },
-                                    { name: 'Books', revenue: 1500 },
-                                    { name: 'Beauty', revenue: 1000 },
-                                ]}>
+                                <BarChart data={salesAnalytics?.categoryStats || []}>
                                     <CartesianGrid strokeDasharray="3 3" opacity={0.1} />
-                                    <XAxis dataKey="name" style={{ fontSize: '12px' }} />
+                                    <XAxis dataKey="_id" style={{ fontSize: '12px' }} />
                                     <YAxis style={{ fontSize: '12px' }} />
-                                    <Tooltip formatter={(value) => [formatCurrency(Number(value)), 'Revenue']} />
-                                    <Bar dataKey="revenue" fill="#3b82f6" radius={[4, 4, 0, 0]} />
+                                    <Tooltip formatter={(value: any) => [formatCurrency(Number(value)), 'Revenue']} />
+                                    <Bar dataKey="revenue" fill="#3b82f6" radius={[4, 4, 0, 0]} name="Revenue" />
                                 </BarChart>
                             </ResponsiveContainer>
                         </DataCard>
@@ -1030,18 +1018,12 @@ export default function AnalyticsPage() {
                             isLoading={loading}
                         >
                             <ResponsiveContainer width="100%" height={320}>
-                                <BarChart data={[
-                                    { rating: '5 stars', count: 45 },
-                                    { rating: '4 stars', count: 30 },
-                                    { rating: '3 stars', count: 15 },
-                                    { rating: '2 stars', count: 7 },
-                                    { rating: '1 star', count: 3 },
-                                ]}>
+                                <BarChart data={(dashboardData?.products?.topSelling || []).slice(0, 8).map(p => ({ name: p.name || 'Unknown', sales: p.sales || 0, revenue: p.revenue || 0 }))}>
                                     <CartesianGrid strokeDasharray="3 3" opacity={0.1} />
-                                    <XAxis dataKey="rating" style={{ fontSize: '12px' }} />
+                                    <XAxis dataKey="name" style={{ fontSize: '11px' }} angle={-30} textAnchor="end" height={60} />
                                     <YAxis style={{ fontSize: '12px' }} />
-                                    <Tooltip />
-                                    <Bar dataKey="count" fill="#10b981" radius={[4, 4, 0, 0]} />
+                                    <Tooltip formatter={(value: any) => [formatNumber(Number(value)), '']} />
+                                    <Bar dataKey="sales" fill="#10b981" radius={[4, 4, 0, 0]} name="Units Sold" />
                                 </BarChart>
                             </ResponsiveContainer>
                         </DataCard>
@@ -1246,29 +1228,30 @@ export default function AnalyticsPage() {
                         <CardContent>
                             <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
                                 {[
-                                    { label: "Revenue", current: 12540, previous: 10890, icon: DollarSign },
-                                    { label: "Orders", current: 245, previous: 210, icon: ShoppingCart },
-                                    { label: "Customers", current: 156, previous: 130, icon: Users },
-                                    { label: "Conversion", current: 2.8, previous: 2.3, icon: TrendingUp, isPercent: true },
+                                    { label: "Revenue", current: dashboardData?.overview?.monthlyRevenue || 0, growth: dashboardData?.growth?.revenue?.growth || 0, icon: DollarSign },
+                                    { label: "Orders", current: dashboardData?.overview?.totalOrders || 0, growth: dashboardData?.growth?.orders?.growth || 0, icon: ShoppingCart },
+                                    { label: "Customers", current: dashboardData?.overview?.totalCustomers || 0, growth: dashboardData?.growth?.customers?.growth || 0, icon: Users },
+                                    { label: "Conversion", current: dashboardData?.overview?.overallConversionRate || dashboardData?.conversion?.overallRate || 0, growth: 0, icon: TrendingUp, isPercent: true },
                                 ].map((metric, index) => {
-                                    const growth = ((metric.current - metric.previous) / metric.previous) * 100
-                                    const isPositive = growth >= 0
+                                    const isPositive = metric.growth >= 0
                                     return (
                                         <div key={index} className="flex flex-col items-center justify-center p-5 rounded-lg border-2 hover:border-primary/50 transition-all bg-gradient-to-br from-muted/50 to-background">
                                             <div className={`p-3 rounded-full mb-3 ${isPositive ? 'bg-emerald-100 dark:bg-emerald-900/30' : 'bg-rose-100 dark:bg-rose-900/30'}`}>
                                                 <metric.icon className={`h-6 w-6 ${isPositive ? 'text-emerald-600 dark:text-emerald-400' : 'text-rose-600 dark:text-rose-400'}`} />
                                             </div>
                                             <h3 className="text-2xl font-bold mb-1">
-                                                {metric.isPercent ? `${metric.current}%` : metric.label === "Revenue" ? formatCurrency(metric.current) : formatNumber(metric.current)}
+                                                {metric.isPercent ? `${metric.current.toFixed(1)}%` : metric.label === "Revenue" ? formatCurrency(metric.current) : formatNumber(metric.current)}
                                             </h3>
                                             <p className="text-sm text-muted-foreground mb-2">{metric.label}</p>
-                                            <div className={`flex items-center px-2 py-1 rounded-full text-xs font-medium ${isPositive
-                                                ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400'
-                                                : 'bg-rose-100 text-rose-700 dark:bg-rose-900/30 dark:text-rose-400'
-                                                }`}>
-                                                {isPositive ? <ArrowUpRight className="h-3 w-3 mr-1" /> : <ArrowDownRight className="h-3 w-3 mr-1" />}
-                                                {`${isPositive ? '+' : ''}${growth.toFixed(1)}%`}
-                                            </div>
+                                            {metric.growth !== 0 && (
+                                                <div className={`flex items-center px-2 py-1 rounded-full text-xs font-medium ${isPositive
+                                                    ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400'
+                                                    : 'bg-rose-100 text-rose-700 dark:bg-rose-900/30 dark:text-rose-400'
+                                                    }`}>
+                                                    {isPositive ? <ArrowUpRight className="h-3 w-3 mr-1" /> : <ArrowDownRight className="h-3 w-3 mr-1" />}
+                                                    {`${isPositive ? '+' : ''}${metric.growth.toFixed(1)}%`}
+                                                </div>
+                                            )}
                                         </div>
                                     )
                                 })}
@@ -1315,31 +1298,26 @@ export default function AnalyticsPage() {
                             </CardHeader>
                             <CardContent className="space-y-5">
                                 {[
-                                    { label: "Revenue Goal", current: 12540, target: 15000, color: "bg-blue-500" },
-                                    { label: "Order Goal", current: 245, target: 300, color: "bg-green-500" },
-                                    { label: "Customer Goal", current: 156, target: 200, color: "bg-purple-500" },
-                                ].map((goal, index) => {
-                                    const progress = (goal.current / goal.target) * 100
+                                    { label: "Revenue", current: dashboardData?.overview?.monthlyRevenue || 0, growth: dashboardData?.growth?.revenue?.growth || 0, color: "bg-blue-500", isCurrency: true },
+                                    { label: "Orders", current: dashboardData?.overview?.totalOrders || 0, growth: dashboardData?.growth?.orders?.growth || 0, color: "bg-green-500", isCurrency: false },
+                                    { label: "Customers", current: dashboardData?.overview?.totalCustomers || 0, growth: dashboardData?.growth?.customers?.growth || 0, color: "bg-purple-500", isCurrency: false },
+                                ].map((item, index) => {
+                                    const isPositive = item.growth >= 0
                                     return (
                                         <div key={index} className="space-y-2">
                                             <div className="flex items-center justify-between">
-                                                <span className="text-sm font-medium">{goal.label}</span>
-                                                <div className="text-right">
+                                                <span className="text-sm font-medium">{item.label}</span>
+                                                <div className="text-right flex items-center gap-2">
                                                     <span className="text-sm font-semibold">
-                                                        {goal.label.includes("Revenue") ? formatCurrency(goal.current) : formatNumber(goal.current)}
+                                                        {item.isCurrency ? formatCurrency(item.current) : formatNumber(item.current)}
                                                     </span>
-                                                    <span className="text-xs text-muted-foreground"> / {goal.label.includes("Revenue") ? formatCurrency(goal.target) : formatNumber(goal.target)}</span>
+                                                    {item.growth !== 0 && (
+                                                        <span className={`text-xs font-medium ${isPositive ? 'text-emerald-600' : 'text-rose-600'}`}>
+                                                            {isPositive ? '+' : ''}{item.growth.toFixed(1)}%
+                                                        </span>
+                                                    )}
                                                 </div>
                                             </div>
-                                            <div className="relative w-full h-2 bg-muted rounded-full overflow-hidden">
-                                                <div
-                                                    className={`absolute top-0 left-0 h-full ${goal.color} transition-all duration-500`}
-                                                    style={{ width: `${Math.min(progress, 100)}%` }}
-                                                />
-                                            </div>
-                                            <p className="text-xs text-muted-foreground">
-                                                {progress.toFixed(1)}% complete
-                                            </p>
                                         </div>
                                     )
                                 })}

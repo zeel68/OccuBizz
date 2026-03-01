@@ -622,7 +622,7 @@ export default function ProductPerformanceAnalytics() {
             value={totalViews.toLocaleString()}
             subtitle={`Across ${mostViewedProducts.length} products`}
             icon={<Eye className="h-6 w-6" />}
-            trend={8.5}
+
             color="primary"
           />
           <MetricCard
@@ -630,7 +630,7 @@ export default function ProductPerformanceAnalytics() {
             value={`$${(totalRevenue / 1000).toFixed(1)}K`}
             subtitle={`From ${totalOrders} orders`}
             icon={<DollarSign className="h-6 w-6" />}
-            trend={12.3}
+
             color="secondary"
           />
           <MetricCard
@@ -638,7 +638,7 @@ export default function ProductPerformanceAnalytics() {
             value={`${avgConversionRate.toFixed(1)}%`}
             subtitle="Average product conversion"
             icon={<Target className="h-6 w-6" />}
-            trend={5.7}
+
             color="accent"
           />
           <MetricCard
@@ -646,7 +646,7 @@ export default function ProductPerformanceAnalytics() {
             value={productRevenueAnalysis.length.toLocaleString()}
             subtitle="In catalog with sales"
             icon={<ShoppingBag className="h-6 w-6" />}
-            trend={15.2}
+
             color="muted"
           />
         </div>
@@ -751,7 +751,7 @@ export default function ProductPerformanceAnalytics() {
                         index={idx}
                         value={`$${product?.totalRevenue?.toLocaleString()}`}
                         subtitle={`${product.totalQuantitySold} sold • ${product.orderCount} orders`}
-                        trend={12.5}
+
                       />
                     ))}
                   </div>
@@ -806,12 +806,12 @@ export default function ProductPerformanceAnalytics() {
                       <Zap className="h-6 w-6 text-amber-700" />
                     </div>
                     <div>
-                      <p className="text-sm font-medium text-muted-foreground">Fastest Mover</p>
+                      <p className="text-sm font-medium text-muted-foreground">Top Seller Revenue</p>
                       <p className="text-2xl font-bold">
-                        +{15.2}%
+                        ${topRevenueProducts[0]?.totalRevenue?.toLocaleString() || '0'}
                       </p>
-                      <p className="text-xs text-muted-foreground">
-                        Sales growth this month
+                      <p className="text-xs text-muted-foreground line-clamp-1">
+                        {topRevenueProducts[0]?.productName || 'No data'}
                       </p>
                     </div>
                   </div>
@@ -840,7 +840,7 @@ export default function ProductPerformanceAnalytics() {
                         index={idx}
                         value={product.totalViews.toLocaleString()}
                         subtitle={`${product.uniqueViewerCount} unique viewers • ${product.bounceRate.toFixed(1)}% bounce`}
-                        trend={8.5}
+
                       />
                     ))}
                   </div>

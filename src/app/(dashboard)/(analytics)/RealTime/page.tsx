@@ -771,10 +771,6 @@ export default function RealTimeAnalytics() {
                       <p className="text-sm text-muted-foreground mb-2">Pages per Session</p>
                       <div className="flex items-end gap-2">
                         <span className="text-3xl font-bold">{activeUsers.avgPagesPerSession.toFixed(1)}</span>
-                        <span className="text-green-600 flex items-center text-sm mb-1">
-                          <TrendingUp className="h-4 w-4 mr-1" />
-                          +5.2%
-                        </span>
                       </div>
                     </div>
                   </div>

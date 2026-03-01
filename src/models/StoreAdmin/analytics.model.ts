@@ -328,11 +328,49 @@ export interface iTopProduct {
 }
 
 export interface iDashboardData {
-    overview: iDashboardOverview
+    overview: iDashboardOverview & { overallConversionRate?: number }
     inventory: iInventoryStats
     recentActivity: {
         recentOrders: iRecentOrder[]
         topProducts: iTopProduct[]
+    }
+    growth?: {
+        revenue: { value: number; growth: number; trend: any[] }
+        orders: { value: number; growth: number }
+        customers: { value: number; growth: number; new: number }
+    }
+    geographic?: {
+        byCountry: Array<{ country: string; revenue: number; orders: number; customer_count: number; average_order_value: number }>
+        byState: Array<{ country: string; state: string; revenue: number; orders: number; customer_count: number }>
+        byCity: Array<{ country: string; state: string; city: string; revenue: number; orders: number; customer_count: number }>
+    }
+    traffic?: {
+        sessions: {
+            total_sessions: number
+            average_session_duration: number
+            bounce_rate: number
+            unique_visitors: number
+            pages_per_session: number
+        }
+        sources: Array<{ source: string; sessions: number; conversions: number; conversion_rate: number; average_duration: number }>
+    }
+    conversion?: {
+        funnel: Array<{ stage: string; count: number; conversion_rate: number }>
+        overallRate: number
+    }
+    products?: {
+        total: number
+        lowStock: number
+        outOfStock: number
+        topSelling: Array<{ product_id: string; name: string; revenue: number; sales: number; average_price: number }>
+        lowStockProducts: Array<{ _id: string; name: string; stock: { quantity: number }; price: number; images: string[] }>
+        mostViewed: any[]
+        mostAddedToCart: any[]
+    }
+    customers?: {
+        segments: any[]
+        returning: number
+        acquisition: Array<{ channel: string; count: number }>
     }
 }
 

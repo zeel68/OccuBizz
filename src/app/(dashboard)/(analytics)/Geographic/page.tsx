@@ -489,7 +489,7 @@ export default function GeographicAnalytics() {
             value={`$${(totalRevenue / 1000).toFixed(1)}K`}
             subtitle={`From ${totalOrders} orders`}
             icon={<DollarSign className="h-6 w-6" />}
-            trend={8.5}
+
             color="primary"
           />
           <MetricCard
@@ -497,7 +497,7 @@ export default function GeographicAnalytics() {
             value={totalOrders.toLocaleString()}
             subtitle={`From ${countryAnalytics.length} countries`}
             icon={<ShoppingCart className="h-6 w-6" />}
-            trend={12.3}
+
             color="secondary"
           />
           <MetricCard
@@ -505,7 +505,7 @@ export default function GeographicAnalytics() {
             value={totalCustomers.toLocaleString()}
             subtitle={`Across all regions`}
             icon={<Users className="h-6 w-6" />}
-            trend={5.7}
+
             color="accent"
           />
           <MetricCard
@@ -513,7 +513,7 @@ export default function GeographicAnalytics() {
             value={`$${avgOrderValue.toFixed(0)}`}
             subtitle={`Per order average`}
             icon={<TrendingUp className="h-6 w-6" />}
-            trend={15.2}
+
             color="muted"
           />
         </div>
