@@ -390,10 +390,10 @@ export default function OrdersTable({ orders, isLoading }: OrderTableProps) {
                     </TableCell>
                     <TableCell>
                       <div className="font-medium">
-                        {order.user_id?.name || "Unknown"}
+                        {order.user_id?.name || order.customer_info?.name || "Unknown"}
                       </div>
                       <div className="text-sm text-muted-foreground">
-                        {order.user_id?.email || "—"}
+                        {order.user_id?.email || order.customer_info?.email || "—"}
                       </div>
                     </TableCell>
                     <TableCell>
@@ -497,45 +497,61 @@ export default function OrdersTable({ orders, isLoading }: OrderTableProps) {
               <div className="space-y-6">
                 <div className="border p-4 rounded">
                   <h3 className="font-medium mb-2">Customer</h3>
-                  <p>{viewingOrder.user_id?.name || "Unknown"}</p>
-                  <p>{viewingOrder.user_id?.email || "—"}</p>
-                  <p>{viewingOrder.user_id?.phone_number || "—"}</p>
+                  <p>{viewingOrder.user_id?.name || viewingOrder.customer_info?.name || "Unknown"}</p>
+                  <p>{viewingOrder.user_id?.email || viewingOrder.customer_info?.email || "—"}</p>
+                  <p>{viewingOrder.user_id?.phone_number || viewingOrder.customer_info?.phone || "—"}</p>
                 </div>
 
                 <div className="border p-4 rounded">
                   <h3 className="font-medium mb-2">Items</h3>
-                  {viewingOrder.items?.map((item: any, idx: number) => (
-                    <div
-                      key={idx}
-                      className="flex justify-between border-b py-2"
-                    >
-                      <span>
-                        {item.product_id.name} {item?.variant_id?.color} × {item.quantity}
-                        {/* {item.product_id.} × {item.quantity} */}
-                      </span>
-                      <span>{formatCurrency(item.quantity * item.price)}</span>
-                    </div>
-                  ))}
+                  {viewingOrder.items?.map((item: any, idx: number) => {
+                    const productName =
+                      typeof item.product_id === "object" && item.product_id?.name
+                        ? item.product_id.name
+                        : item.product_name || item.name || "Product";
+                    const variantInfo = item.variant_id
+                      ? typeof item.variant_id === "object"
+                        ? ` - ${[item.variant_id.color, item.variant_id.size].filter(Boolean).join(", ")}`
+                        : ""
+                      : "";
+                    return (
+                      <div
+                        key={idx}
+                        className="flex justify-between border-b py-2"
+                      >
+                        <span>
+                          {productName}{variantInfo} × {item.quantity}
+                        </span>
+                        <span>{formatCurrency(item.quantity * item.price)}</span>
+                      </div>
+                    );
+                  })}
                 </div>
 
                 <div className="border p-4 rounded">
                   <div className="flex justify-between">
                     <span>Subtotal</span>
-                    <span>{formatCurrency(viewingOrder.total || 0)}</span>
+                    <span>{formatCurrency(viewingOrder.subtotal || viewingOrder.total || 0)}</span>
                   </div>
                   <div className="flex justify-between">
                     <span>Shipping</span>
                     <span>
-                      {formatCurrency(viewingOrder.shipping_cost || 0)}
+                      {formatCurrency(viewingOrder.shipping_cost || viewingOrder.shipping || 0)}
                     </span>
                   </div>
                   <div className="flex justify-between">
                     <span>Tax</span>
-                    <span>{formatCurrency(viewingOrder.tax_amount || 0)}</span>
+                    <span>{formatCurrency(viewingOrder.tax_amount || viewingOrder.tax || 0)}</span>
                   </div>
+                  {(viewingOrder.discount ?? 0) > 0 && (
+                    <div className="flex justify-between text-green-600">
+                      <span>Discount</span>
+                      <span>-{formatCurrency(viewingOrder.discount || 0)}</span>
+                    </div>
+                  )}
                   <div className="flex justify-between font-bold border-t pt-2">
                     <span>Total</span>
-                    <span>{formatCurrency(viewingOrder.total || 0)}</span>
+                    <span>{formatCurrency(viewingOrder.total_amount || viewingOrder.total || 0)}</span>
                   </div>
                 </div>
 
@@ -674,9 +690,9 @@ export default function OrdersTable({ orders, isLoading }: OrderTableProps) {
               <div className="grid grid-cols-2 gap-8 mb-8">
                 <div>
                   <h2 className="text-lg font-semibold mb-2">Bill To:</h2>
-                  <p>{viewingOrder.user_id?.name || "Customer"}</p>
-                  <p>{viewingOrder.user_id?.email || "—"}</p>
-                  <p>{viewingOrder.user_id?.phone_number || "—"}</p>
+                  <p>{viewingOrder.user_id?.name || viewingOrder.customer_info?.name || "Customer"}</p>
+                  <p>{viewingOrder.user_id?.email || viewingOrder.customer_info?.email || "—"}</p>
+                  <p>{viewingOrder.user_id?.phone_number || viewingOrder.customer_info?.phone || "—"}</p>
                 </div>
 
                 <div>
@@ -698,20 +714,26 @@ export default function OrdersTable({ orders, isLoading }: OrderTableProps) {
                     </tr>
                   </thead>
                   <tbody>
-                    {viewingOrder.items?.map((item: any, idx: number) => (
-                      <tr key={idx}>
-                        <td className="p-2 border">
-                          {item.product_name || item.name}
-                        </td>
-                        <td className="p-2 border">
-                          {formatCurrency(item.price)}
-                        </td>
-                        <td className="p-2 border">{item.quantity}</td>
-                        <td className="p-2 border">
-                          {formatCurrency(item.price * item.quantity)}
-                        </td>
-                      </tr>
-                    ))}
+                    {viewingOrder.items?.map((item: any, idx: number) => {
+                      const name =
+                        typeof item.product_id === "object" && item.product_id?.name
+                          ? item.product_id.name
+                          : item.product_name || item.name || "Product";
+                      return (
+                        <tr key={idx}>
+                          <td className="p-2 border">
+                            {name}
+                          </td>
+                          <td className="p-2 border">
+                            {formatCurrency(item.price)}
+                          </td>
+                          <td className="p-2 border">{item.quantity}</td>
+                          <td className="p-2 border">
+                            {formatCurrency(item.price * item.quantity)}
+                          </td>
+                        </tr>
+                      );
+                    })}
                   </tbody>
                 </table>
               </div>

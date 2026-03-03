@@ -13,8 +13,14 @@ export interface iOrder {
     name: string;
     email: string;
     phone_number?: string;
+  } | null;
+  customer_info?: {
+    name?: string;
+    email?: string;
+    phone?: string;
   };
   total: number;
+  total_amount?: number;
   subtotal?: number;
   tax?: number;
   tax_amount: number;
@@ -26,8 +32,10 @@ export interface iOrder {
   payment_status: string;
   payment_method?: string;
   items: Array<{
-    product_id: string;
-    product_name: string;
+    product_id: string | { _id: string; name: string;[key: string]: any };
+    product_name?: string;
+    name?: string;
+    variant_id?: string | { _id: string; color?: string; size?: string;[key: string]: any };
     quantity: number;
     price: number;
     total?: number;
